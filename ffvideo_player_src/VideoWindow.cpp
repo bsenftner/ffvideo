@@ -74,7 +74,7 @@ wxEND_EVENT_TABLE()
 
 ////////////////////////////////////////////////////////////////////////
 VideoWindow::VideoWindow(TheApp* app, int32_t id)
-	: wxFrame(NULL, wxID_ANY, "VideoFramePipeline running ffmpeg 4.4"),
+	: wxFrame(NULL, wxID_ANY, "FFVideo_player running ffmpeg 4.4"),
 	mp_app(app), mp_streamConfig(NULL), m_id(id), m_terminating(false), m_usb_selection(-1), m_visible(false)
 {
 	// needs to be before the RenderCanvas() creation because that uses the ReportLog, so we need to init it first:
@@ -149,7 +149,7 @@ VideoWindow::VideoWindow(TheApp* app, int32_t id)
 	//
 	mp_optionsMenu->Append(ID_HELP_MENU, "Help...");
 	//
-	mp_optionsMenu->Append(ID_ABOUT_MENU, "About VideoFramePipeline...");
+	mp_optionsMenu->Append(ID_ABOUT_MENU, "About FFVideo Player...");
 	//
 	// add menu to menuBar:
 	mp_menuBar->Append(mp_optionsMenu, wxString("&Options"));
@@ -1025,7 +1025,7 @@ void VideoWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 		return;
 
 	wxAboutDialogInfo info;
-	info.SetName(_("VideoFramePipeline"));
+	info.SetName(_("FFVideo"));
 	info.SetVersion(_("0.9 Beta"));
 
 	wxString desc( "\nThis program is a series of things:\n\n" );

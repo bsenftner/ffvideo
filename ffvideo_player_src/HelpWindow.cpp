@@ -17,7 +17,7 @@ wxEND_EVENT_TABLE()
 
 
 HelpWindow::HelpWindow(TheApp* app, wxWindow* parent )
-	: wxFrame(parent, wxID_ANY, "VideoFramePipeline Help", wxDefaultPosition, 
+	: wxFrame(parent, wxID_ANY, "FFVideo_player Help", wxDefaultPosition, 
 	          wxSize(HELP_WIN_WIDTH,HELP_WIN_HEIGHT), wxRESIZE_BORDER | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN), 
 	  mp_app(app), mp_help_view(NULL)
 {
@@ -38,7 +38,7 @@ HelpWindow::HelpWindow(TheApp* app, wxWindow* parent )
 	BuildHTMLBody();
 
 	// maintained in a member variable, supports this code being used as a template: 
-	m_html_filename = "VideoFramePipelineHelp.htm";
+	m_html_filename = "FFVideoPlayerHelp.htm";
 
 	// the html of the page written to this filename in memory:
 	wxMemoryFSHandler::AddFile(m_html_filename, m_html_body );
@@ -155,7 +155,7 @@ void HelpWindow::BuildFeatureBullets( void )
 					<B>Help...</B> opens the nifty <B>Help Window</B> you are now reading
 				</LI>
 				<LI>
-					<B>About VideoFramePipeline...</B> opens a dialog describing who to blame for this software 
+					<B>About FFVideo Player...</B> opens a dialog describing who to blame for this software 
 				</LI>
 			</UL>
 		</LI>
@@ -444,7 +444,7 @@ void HelpWindow::BuildHTMLBody( void )
 	m_html_body += GetWebContentJavaScriptCallbacks();
 	m_html_body += R"V0G0N(
 <div style="margin-bottom: 10px;">
-<B>VideoFramePipeline</B> is a free and open source application, it is a no-audio video player intended 
+<B>FFVideo Player</B> is a free and open source application, it is a no-audio video player intended 
    for video experiments and developers learning how to code media applications:<br>
 <span class="smaller">(enlarge window for a better view)</span>
 </div>
@@ -453,7 +453,7 @@ void HelpWindow::BuildHTMLBody( void )
 	int32_t winWidth, winHeight;
 	GetClientSize(&winWidth, &winHeight);
 
-	wxString im_path0 = mp_app->m_data_dir + "\\gui\\VideoFramePipeline00.png";
+	wxString im_path0 = mp_app->m_data_dir + "\\gui\\FFVideo00.png";
 	wxString im_tag0 = wxString::Format( "<img width=\"%d\" src=\"%s\">", winWidth-40, im_path0.c_str() );
 	im_tag0 += R"V0G0N(
 		<div class="inset2 smaller">
@@ -463,10 +463,10 @@ void HelpWindow::BuildHTMLBody( void )
 
 	// style=\"margin-bottom: -200px;\" 
 
-	wxString im_path1 = mp_app->m_data_dir + "\\gui\\VideoFramePipeline01frag.png";
+	wxString im_path1 = mp_app->m_data_dir + "\\gui\\FFVideo01frag.png";
 	wxString im_tag1a = wxString::Format( "<img src=\"%s\">", im_path1.c_str() );
 
-	wxString im_path1b = mp_app->m_data_dir + "\\gui\\VideoFramePipeline01.png";
+	wxString im_path1b = mp_app->m_data_dir + "\\gui\\FFVideo01.png";
 	wxString im_tag1b = wxString::Format( "<img width=\"%d\" src=\"%s\">", winWidth-40, im_path1b.c_str() );
 	im_tag1b += R"V0G0N(
 		<div class="inset2 smaller">
@@ -474,13 +474,13 @@ void HelpWindow::BuildHTMLBody( void )
 		</div>
 )V0G0N";
 
-	wxString im_path2 = mp_app->m_data_dir + "\\gui\\VideoFramePipeline02.png";
+	wxString im_path2 = mp_app->m_data_dir + "\\gui\\FFVideo02.png";
 	wxString im_tag2 = wxString::Format( "<img width=\"%d\" src=\"%s\">", winWidth-40, im_path2.c_str() );
 
 	m_html_body += im_tag0;
 	m_html_body += R"V0G0N(
 <div class="normal" style="margin-top: 20px; margin-bottom: 20px;">
-<B>VideoFramePipeline</B> supports multiple simultanious <i>minimum delay playback</i> video windows, seek, 
+<B>FFVideo</B> supports multiple simultanious <i>minimum delay playback</i> video windows, seek, 
    scrubbing, basic face detection, plus the surrounding code necessary for a moderately professional application, 
 	 such as persistance for end-user settings, and this embedded web browser providing a 'help window'.<br><br>
 	 The idea of this application is to provide a basic video app framework
