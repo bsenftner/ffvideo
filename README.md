@@ -68,10 +68,6 @@ Dlib's face detection model file shape_predictor_68_face_landmarks.dat is also r
 After decompression, it should be placed in the project's bin directory, just beneath the project's git root
 
 Known issues:
-Rebuilding against FFmpeg 4.2.3 see,s to have removed the replay instabilities, but it's not as fast anymore. See note, mid-readme
-
+(Rebuilding against FFmpeg 4.2.3 see,s to have removed the replay instabilities, but it's not as fast anymore. See note, mid-readme)
 - how USB cameras initialize impact other non-USB cameras if the play request is simultaneous across USB and non-USB cameras
   - the work around for the moment is to play USB cameras individually, before using the "Play All" menu option for any other video windows
-- ~~re-plays are unstable, something is not being cleaned up and that needs to be fixed. An earlier version of the FFmpeg wrapper had no issues with replays, so it is just some debugging time to figure that out... 
-  - ~~For media files on disk, just setting the "loop" flag prevents the video from "ending" and seek/step can be used forever...
-  - ~~For USB and IP streams, as long as the stream does not end on it's own the video player will continue to work. i've tested it with weeks of continual playback across multiple video streams; no memory leaks. 
