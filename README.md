@@ -49,9 +49,12 @@ set(VCPKG_PLATFORM_TOOLSET v142)
 ```
 Once that custom vcpkg triplet was in place, vcpkg correctly generates Visual Studio 2019 x64 static builds using the Windows 142 toolset
 
-Through wxWidgets OpenGL, and an embedded web browser is encorporated.
+Through wxWidgets OpenGL, and an embedded web browser is encorporated. The embedded web browser requires a custom build of wxWidgets. 
+
 Dlib's face detection model file shape_predictor_68_face_landmarks.dat is also required for this project, it can be downloaded in compressed form from:
+
    http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
+   
 After decompression, it should be placed in the project's bin directory, just beneath the project's git root
 
 Also, this project uses Jorge L Rodriguez's stb image scaling header only library, from http://github.com/nothings/stb for some image scaling operations.
