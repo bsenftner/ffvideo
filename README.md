@@ -14,7 +14,7 @@ a nice framework for doing so. This is a C++ Visual Studio 2019 IDE Solution and
 Some of the coding examples in this project include:
  - An FFmpeg library supporting 
    - video files, USB Cameras, IP Cameras and IP video services
-   - video file seeks, scrubbing, AVFilterGrph filters, and frame exporting
+   - video file seeks, scrubbing, unlimited AVFilterGraph filters, and frame exporting
    - This project uses the author's modified FFmpeg located here 
      - https://github.com/bsenftner/FFmpeg
      - The modification is to support unexpected IP and USB stream dropouts
