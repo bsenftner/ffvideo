@@ -61,3 +61,9 @@ After decompression, it should be placed in the project's bin directory, just be
 
 Also, this project uses Jorge L Rodriguez's stb image scaling header only library, from http://github.com/nothings/stb for some image scaling operations.
 
+Known issues:
+- how USB cameras initialize impact other non-USB cameras if the play request is simultaneous across USB and non-USB cameras
+  - the work around for the moment is to play USB cameras individually, before using the "Play All" menu option for any other video windows
+- re-plays are unstable, something is not being cleaned up and that needs to be fixed. An earlier version of the FFmpeg wrapper had no issues with replays, so it is just some debugging time to figure that out... 
+  - For media files on disk, just setting the "loop" flag prevents the video from "ending" and seek/step can be used forever...
+  - For USB and IP streams, as long as the stream does not end on it's own the video player will continue to work. i've tested it with weeks of continual playback across multiple video streams; no memory leaks. 
