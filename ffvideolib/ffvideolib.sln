@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ffvideolib", "ffvideolib\ffvideolib.vcxproj", "{4E4F0899-BB48-4F47-AACA-4F3B2619714C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ffvideo_player", "..\ffvideo_player\ffvideo_player\ffvideo_player.vcxproj", "{7A1E6AF0-2EA3-45F7-B8F6-10A8F4D8CDCB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E4F0899-BB48-4F47-AACA-4F3B2619714C} = {4E4F0899-BB48-4F47-AACA-4F3B2619714C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -35,7 +35,7 @@ bool FFVideo::StartUSB(FFVIDEO_USB_Camera_Format* camera)
 	setup_av_options(camera->m_name.c_str(), active_usb_format);
 
 	// mp_format_context will be set to a valid AVFormatContext if avformat_open_input() succeeeds
-	if (avformat_open_input(&mp_format_context, finalSrcStr, input_format, &mp_opts) != 0)
+	if (avformat_open_input(&mp_format_context, finalSrcStr, (AVInputFormat*)input_format, &mp_opts) != 0)
 	{
 		ReportLog("Could not open camera at USB Pin %d.", m_usb_pin);
 		return false;
@@ -134,7 +134,7 @@ bool FFVideo::StartUSBGuessingCamera(void)
 		setup_av_options(cameraStr.c_str(), active_usb_format);
 
 		// mp_format_context will be set to a valid AVFormatContext if avformat_open_input() succeeeds
-		if (avformat_open_input(&mp_format_context, finalSrcStr, input_format, &mp_opts) != 0)
+		if (avformat_open_input(&mp_format_context, finalSrcStr, (AVInputFormat*)input_format, &mp_opts) != 0)
 		{
 			ReportLog("Could not open camera at USB Pin %d.", m_usb_pin);
 			return false;
@@ -328,7 +328,7 @@ bool FFVideo::GetCameraPixelFormats(const char* cameraName, std::vector<FFVIDEO_
 	start_query_capture();
 	//
 	// generate pixel format log messages
-	avformat_open_input(&pFormatCtx, finalSrcStr, input_format, &options);
+	avformat_open_input(&pFormatCtx, finalSrcStr, (AVInputFormat*)input_format, &options);
 	//
 	std::vector<std::string> captured_log;
 	stop_query_capture(captured_log);

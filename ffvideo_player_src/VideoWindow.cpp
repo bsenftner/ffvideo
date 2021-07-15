@@ -74,7 +74,7 @@ wxEND_EVENT_TABLE()
 
 ////////////////////////////////////////////////////////////////////////
 VideoWindow::VideoWindow(TheApp* app, int32_t id)
-	: wxFrame(NULL, wxID_ANY, "FFVideo_player running ffmpeg 4.4"),
+	: wxFrame(NULL, wxID_ANY, "FFVideo_player running ffmpeg 4.2.3"),
 	mp_app(app), mp_streamConfig(NULL), m_id(id), m_terminating(false), m_usb_selection(-1), m_visible(false)
 {
 	// needs to be before the RenderCanvas() creation because that uses the ReportLog, so we need to init it first:
