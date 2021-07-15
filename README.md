@@ -28,6 +28,8 @@ Some of the coding examples in this project include:
    - An embedded web browser as the "help" window
    - Lots in-code of documentation describing how, what and why 
 
+When playing an HD film trailer from a local SSD drive, frame rates as high as 700 fps can be achieved while only using 2 cores of a Ryzen 7. 
+
 Although vcpkg is used, integration issues led to independant building of Boost, FFmpeg, GLEW, and WxWidgets. 
 For these reasons the following environment variables are used within the project's Visual Studio 2019 solution and VS projects to locate these libraries:
  - **BoostRoot**    Set to root of the Boost 1_76_0 directory hierarchy
