@@ -14,21 +14,26 @@ a nice framework for doing so. This is a C++ Visual Studio 2019 IDE Solution and
 Some of the coding examples in this project include:
  - An FFmpeg library supporting 
    - video files, USB Cameras, IP Cameras and IP video services
-   - video file seeks, scrubbing, unlimited AVFilterGraph filters, and frame exporting
+   - video file seeks, scrubbing, 
+   - unlimited, chained single source AVFilterGraph filters, 
+   - frame exporting
    - This project uses the author's modified FFmpeg located here 
      - https://github.com/bsenftner/FFmpeg
      - The modification is to support unexpected IP and USB stream dropouts
    - This project also uses the author's SQLite3 wrapper library, located here:
      - https://github.com/bsenftner/kvs
+   - And this project uses Jorge L Rodriguez's stb image scaling header only library:
+     - http://github.com/nothings/stb 
  - A multi-threaded wxWidgets Video Player application
    - Multiple simultanious video windows
    - Exported video frames collected and re-encoded as H.264 .MP4 and .264 Elementary Streams 
    - Easy access to AVFilterGraph Video Filters and video experimentation
-   - Integration with Dlib and a basic example of Face Detection of Face Landmark Recovery
-   - An embedded web browser as the "help" window
+   - Integration with Dlib and a basic example of Face Detection and of Face Landmark Recovery
+   - An embedded web browser as the "Help" window
    - Lots in-code of documentation describing how, what and why 
 
 When playing an HD film trailer from a local SSD drive, frame rates as high as 700 fps can be achieved while only using 2 cores of a Ryzen 7. 
+Extended time tests show no memory leakage or stale/dead thread acculumation. 
 
 Although vcpkg is used, integration issues led to independant building of Boost, FFmpeg, GLEW, and WxWidgets. 
 For these reasons the following environment variables are used within the project's Visual Studio 2019 solution and VS projects to locate these libraries:
@@ -58,8 +63,6 @@ Dlib's face detection model file shape_predictor_68_face_landmarks.dat is also r
    http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
    
 After decompression, it should be placed in the project's bin directory, just beneath the project's git root
-
-Also, this project uses Jorge L Rodriguez's stb image scaling header only library, from http://github.com/nothings/stb for some image scaling operations.
 
 Known issues:
 - how USB cameras initialize impact other non-USB cameras if the play request is simultaneous across USB and non-USB cameras
