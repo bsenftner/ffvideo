@@ -5,7 +5,7 @@ learning how to code media applications.
 ![FFVideo00](https://user-images.githubusercontent.com/1216815/125710205-65eaf07c-31b3-43e0-b660-867780cbaba5.png)
 
 FFVideo Player supports multiple simultanious minimum delay playback video windows, seek, scrubbing, basic face detection, plus the surrounding code necessary for a moderately
-professional application, such as persistance for end-user settings, and this embedded web browser providing a 'help window'.
+professional application, such as persistance for end-user settings, and an embedded web browser providing a 'help window'.
 
 The idea of this application is to provide a basic video app framework for developers wanting to learn, and experiment with video filters without the overhead of audio processing
 or the normal frame delays of ordinary video playback. If one is training models with video data, and want to preserve the maximum amount of resources for training, this provides
