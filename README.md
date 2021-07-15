@@ -34,13 +34,14 @@ Some of the coding examples in this project include:
    - An embedded web browser as the "Help" window
    - Lots in-code of documentation describing how, what and why 
 
-When playing an HD film trailer from a local SSD drive, frame rates as high as 700 fps can be achieved while only using 2 cores of a Ryzen 7. 
-Extended time tests show no memory leakage or stale/dead thread acculumation. 
+When playing an HD film trailer from a local SSD drive, frame rates as high as ~~700~~ 70 fps (after reverting fo FFmpeg 4.2.3) can be achieved while 
+only using 2 cores of a Ryzen 7. Extended time tests show no memory leakage or stale/dead thread acculumation. 
 
 Although vcpkg is used, integration issues led to independant building of Boost, FFmpeg, GLEW, and WxWidgets. 
 For these reasons the following environment variables are used within the project's Visual Studio 2019 solution and VS projects to locate these libraries:
  - **BoostRoot**    Set to root of the Boost 1_76_0 directory hierarchy
- - **FFmpegRoot**   Set to the FFmpeg installation directory root, author used version 4.4
+ - **FFmpegRoot**   Set to the FFmpeg installation directory root, author used version ~~4.4~~ 4.2.3 - new build with FFmpeg 4.2.3 is more stable, see below
+ - **FFmpegDebugRoot** Set to the FFmpeg debug build directory root
  - **FFvideoRoot**  Set to the github root of this project
  - **GLEWRoot**     Set to root of GLEW 2.2.0
  - **kvsRoot**      Set to the github root of https://github.com/bsenftner/kvs
@@ -67,8 +68,10 @@ Dlib's face detection model file shape_predictor_68_face_landmarks.dat is also r
 After decompression, it should be placed in the project's bin directory, just beneath the project's git root
 
 Known issues:
+Rebuilding against FFmpeg 4.2.3 see,s to have removed the replay instabilities, but it's not as fast anymore. See note, mid-readme
+
 - how USB cameras initialize impact other non-USB cameras if the play request is simultaneous across USB and non-USB cameras
   - the work around for the moment is to play USB cameras individually, before using the "Play All" menu option for any other video windows
-- re-plays are unstable, something is not being cleaned up and that needs to be fixed. An earlier version of the FFmpeg wrapper had no issues with replays, so it is just some debugging time to figure that out... 
-  - For media files on disk, just setting the "loop" flag prevents the video from "ending" and seek/step can be used forever...
-  - For USB and IP streams, as long as the stream does not end on it's own the video player will continue to work. i've tested it with weeks of continual playback across multiple video streams; no memory leaks. 
+- ~~re-plays are unstable, something is not being cleaned up and that needs to be fixed. An earlier version of the FFmpeg wrapper had no issues with replays, so it is just some debugging time to figure that out... 
+  - ~~For media files on disk, just setting the "loop" flag prevents the video from "ending" and seek/step can be used forever...
+  - ~~For USB and IP streams, as long as the stream does not end on it's own the video player will continue to work. i've tested it with weeks of continual playback across multiple video streams; no memory leaks. 
