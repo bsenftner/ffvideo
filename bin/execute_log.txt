@@ -1,0 +1,141 @@
+
+
+hello world from window 0
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+USB WebCam : 0 : 5
+
+
+hello world from window 1
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+Stream URL : rtsp://192.168.0.9:554/user=admin&password=kCHD67pC&channel=1&stream=0.sdp?real_stream
+
+
+hello world from window 2
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+Stream URL : rtsp://192.168.0.11:554/user=admin&password=tlJwpbo6&channel=1&stream=0.sdp?real_stream
+
+
+hello world from window 3
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+Stream URL : rtsp://admin:8li3iz!!@192.168.0.17:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif
+
+
+hello world from window 4
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+Media File : E:\videos\free-guy-trailer-2_h1080p.mov
+
+
+hello world from window 5
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+Stream URL : rtsp://admin:8li3iz@192.168.0.20:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif
+expected_frame_rate is 30.000000000, from stream
+win0: got first frame
+Media file duration is  0:02:24
+expected_frame_rate is 23.976023976, from stream
+win4: got first frame
+Stepping backward 1 frame.
+expected_frame_rate is 20.000000000, from stream
+win3: got first frame
+expected_frame_rate is 20.000000000, from stream
+win1: got first frame
+expected_frame_rate is 20.000000000, from stream
+win5: got first frame
+expected_frame_rate is 20.000000000, from stream
+av_read_frame: error Immediate exit requested
+
+win2: Unexpected stream termination, delivered 0 frames
+
+Unexpected stream termination replay
+whew!expected_frame_rate is 20.000000000, from stream
+bye world.
+
+
+hello world from window 0
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+USB WebCam : 0 : 5
+
+
+hello world from window 1
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+Stream URL : rtsp://192.168.0.9:554/user=admin&password=kCHD67pC&channel=1&stream=0.sdp?real_stream
+
+
+hello world from window 2
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+Stream URL : rtsp://192.168.0.11:554/user=admin&password=tlJwpbo6&channel=1&stream=0.sdp?real_stream
+
+
+hello world from window 3
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+Stream URL : rtsp://admin:8li3iz!!@192.168.0.17:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif
+
+
+hello world from window 4
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+Media File : E:\videos\free-guy-trailer-2_h1080p.mov
+
+
+hello world from window 5
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+Stream URL : rtsp://admin:8li3iz@192.168.0.20:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif
+expected_frame_rate is 30.000000000, from stream
+win0: got first frame
+Media file duration is  0:02:24
+expected_frame_rate is 23.976023976, from stream
+win4: got first frame
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping forwward 1 frame.
+Stepping backward 1 frame.
+Stepping backward 1 frame.
+Stepping backward 1 frame.
+Stepping backward 1 frame.
+Stepping backward 1 frame.
+Stepping backward 1 frame.
+Stepping backward 1 frame.
+Stepping backward 1 frame.
+expected_frame_rate is 20.000000000, from stream
+win3: got first frame
+expected_frame_rate is 20.000000000, from stream
+expected_frame_rate is 20.000000000, from stream
+win5: got first frame
+win1: got first frame
+expected_frame_rate is 20.000000000, from stream
+win2: got first frame
+bye world.
+
+
+hello world from window 0
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+USB WebCam : 0 : 5
+bye world.
+
+
+hello world from window 0
+Init'ed OpenGL, getting '4.6.0 NVIDIA 431.02'
+we are running FFVideo V1.0
+USB WebCam : 0 : 5
