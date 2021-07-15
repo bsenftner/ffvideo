@@ -68,6 +68,8 @@ Dlib's face detection model file shape_predictor_68_face_landmarks.dat is also r
 After decompression, it should be placed in the project's bin directory, just beneath the project's git root
 
 Known issues:
-(Rebuilding against FFmpeg 4.2.3 see,s to have removed the replay instabilities, but it's not as fast anymore. See note, mid-readme)
+
+(Rebuilding against FFmpeg 4.2.3 seems to have removed the replay instabilities, but it's not as fast anymore. See note, mid-readme)
+
 - how USB cameras initialize impact other non-USB cameras if the play request is simultaneous across USB and non-USB cameras
   - the work around for the moment is to play USB cameras individually, before using the "Play All" menu option for any other video windows
