@@ -9,7 +9,7 @@ professional application, such as persistance for end-user settings, and this em
 
 The idea of this application is to provide a basic video app framework for developers wanting to learn, and experiment with video filters without the overhead of audio processing
 or the normal frame delays of ordinary video playback. If one is training models with video data, and want to preserve the maximum amount of resources for training, this provides
-a nice framework for doing so.
+a nice framework for doing so. This is a C++ Visual Studio 2019 IDE Solution and Project. 
 
 Some of the coding examples in this project include:
  - An FFmpeg library supporting 
@@ -27,4 +27,32 @@ Some of the coding examples in this project include:
    - Integration with Dlib and a basic example of Face Detection of Face Landmark Recovery
    - An embedded web browser as the "help" window
    - Lots in-code of documentation describing how, what and why 
+
+Although vcpkg is used, integration issues led to independant building of Boost, FFmpeg, GLEW, and WxWidgets. 
+For these reasons the following environment variables are used within the project's Visual Studio 2019 solution and VS projects to locate these libraries:
+ - **BoostRoot**    Set to root of the Boost 1_76_0 directory hierarchy
+ - **FFmpegRoot**   Set to the FFmpeg installation directory root, author used version 4.4
+ - **FFvideoRoot**  Set to the github root of this project
+ - **GLEWRoot**     Set to root of GLEW 2.2.0
+ - **kvsRoot**      Set to the github root of https://github.com/bsenftner/kvs
+ - **vcpkgRoot**    Set to the installation root of vcpkg
+ - **WXWIN**        Set to the installation root of wxWidgets, author used version 3.1.3 with the optional wxWebView component built and required for this project
+
+Through vcpkg integration with Visual Studio, the TurboJPEG, jpeg, png, zlib, and Dlib libraries are also used.
+Vcpkg also failed to integrate with Visual Studio 2019 out of the box, so a custom *triplet file* named **x64-windows-static-142.cmake** was placed inside
+the $(vcpkgRoot)\triplets directory with this contents:
+```
+set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_CRT_LINKAGE static)
+set(VCPKG_LIBRARY_LINKAGE static)
+set(VCPKG_PLATFORM_TOOLSET v142)
+```
+Once that custom vcpkg triplet was in place, vcpkg correctly generates Visual Studio 2019 x64 static builds using the Windows 142 toolset
+
+Through wxWidgets OpenGL, and an embedded web browser is encorporated.
+Dlib's face detection model file shape_predictor_68_face_landmarks.dat is also required for this project, it can be downloaded in compressed form from:
+   http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
+After decompression, it should be placed in the project's bin directory, just beneath the project's git root
+
+Also, this project uses Jorge L Rodriguez's stb image scaling header only library, from http://github.com/nothings/stb for some image scaling operations.
 
