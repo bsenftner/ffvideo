@@ -11,6 +11,8 @@ The idea of this application is to provide a basic video app framework for devel
 or the normal frame delays of ordinary video playback. If one is training models with video data, and want to preserve the maximum amount of resources for training, this provides
 a nice framework for doing so. This is a C++ Visual Studio 2019 IDE Solution and Project. 
 
+![Interfaces](https://user-images.githubusercontent.com/1216815/125846001-2d363d08-35ac-4ff0-9538-bbf7fa7f1b7f.png)
+
 Some of the coding examples in this project include:
  - An FFmpeg library supporting 
    - video files, USB Cameras, IP Cameras and IP video services
