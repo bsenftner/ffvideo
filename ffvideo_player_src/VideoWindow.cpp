@@ -1066,7 +1066,7 @@ void VideoWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 	wxAboutDialogInfo info;
 	info.SetName(_("FFVideo"));
-	info.SetVersion(_("0.9 Beta"));
+	info.SetVersion(_("0.91 Beta"));
 
 	wxString desc( "\nThis program is a series of things:\n\n" );
 	desc += "* a video player supporting IP video, USB Camera and Media File sourced video,\n";
@@ -1077,7 +1077,7 @@ void VideoWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 	//
 	info.SetDescription(desc);
 
-	info.SetCopyright(wxT("(C) 2021 Blake Senftner https://github.com/bsenftner"));
+	info.SetCopyright(wxT("(C) 2021 Blake Senftner https://github.com/bsenftner/ffvideo"));
 	
 	wxAboutBox(info);
 }
@@ -1169,6 +1169,10 @@ void VideoWindow::OnTileWindows( wxCommandEvent& event )
 	{
 		wxDisplay monitor(i);
 		wxRect clientArea = monitor.GetGeometry(); 
+
+		// do accomidate windows bottom of the monitor toolbars:
+		clientArea.SetBottom( clientArea.GetBottom() - 40 );
+
 		monitorRects.push_back(clientArea);
 	}
 

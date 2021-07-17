@@ -133,6 +133,9 @@ void HelpWindow::BuildFeatureBullets( void )
 					<B>Play All Video Windows</B> not currently playing
 				</LI>
 				<LI>
+					<B>Stop All Video Windows</B>
+				</LI>
+				<LI>
 					<B>Close All and Quit</B> ends playback of all windows, saves their last configurations, and quits the application
 				</LI>
 			</UL>

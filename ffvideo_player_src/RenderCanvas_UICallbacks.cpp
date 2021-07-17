@@ -27,7 +27,8 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////////
-// installed into ffvideo's frame display callback, this receives every video frame
+// installed into ffvideo's frame display callback, this receives the video frames
+// according to the frame interval setting; i.e. frame interval of 1 is every frame
 void RenderCanvas::FrameCallBack(void* p_object, FFVideo_Image& im, int frame_num)
 {
 	if (p_object)
@@ -38,7 +39,7 @@ void RenderCanvas::FrameCallBack(FFVideo_Image& im, int frame_num)
 	if (mp_videoWindow && mp_videoWindow->m_terminating)
 		return;
 
-	// if the face detector is both initialized and anbled, send the frame for face detection: 
+	// if the face detector is both initialized and enbled, send the frame for face detection: 
 	if (m_faceDetectMgr.m_faceDetectorInitialized && m_faceDetectMgr.m_faceDetectorEnabled)
 	{
 		m_faceDetectMgr.Add( im, frame_num );
@@ -61,7 +62,9 @@ void RenderCanvas::FrameFaceDetectionCallBack(FaceDetectionFrame& fdf)
 	if (IsFaceDetectionEnabled())
 	{
 		// we use the image size of the face detection image to normalize the 
-		// face points, so that size is acquired here:
+		// face points, so that size is acquired here. It's acquired here so
+		// the face detection code is free to muck around with detection image
+		// resolution for speed-wise optimization of face detections:
 		m_faceDetectMgr.mp_faceDetector->GetDlibImageSize( m_detectImSize );
 
 		m_detections = fdf.m_detections;
@@ -101,7 +104,7 @@ void RenderCanvas::CommonFrameHandling(FFVideo_Image& im, int frame_num)
 	m_status = VIDEO_STATUS::RECEIVING_FRAMES;
 	m_frame_loaded = true;
 
-	// remember this is a non-wxWidgets thread, 
+	// remember this runs in a non-wxWidgets thread, 
 	// so we must send a render event rather than rendering directly: 
 	mp_videoWindow->SendVideoRefreshEvent();
 }
@@ -117,7 +120,7 @@ void RenderCanvas::FrameExportCallBack(void* p_object, int32_t frame_num, int32_
 		((RenderCanvas*)p_object)->FrameExportCallBack(frame_num, export_num, filepath, status);
 }
 
-////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // installed as the video library's frame export callback, this is called after each frame's write to disk; the parameters:
 //		frame_num			this is the frame number according to the media
 //		export_num		this tells us how many frame exports have occured since Play began, including this one
@@ -175,6 +178,8 @@ void RenderCanvas::UnexpectedTerminationCallBack(void)
 
 	WindowStatus(wxString(msg.c_str()));
 
+	// if the stream is an IP stream, it could be a security camera that simply crapped out or something temporary like that,
+	// so if an IP stream we'll try re-playing the stream in 5 seconds by putting a "replay" function into the delayedCallbackMgr:
 	if (mp_videoWindow->mp_streamConfig->m_type == STREAM_TYPE::IP)
 		m_delayedCallbacks.Add(UnexpectedTerminationReplayCallBack, this, 5.0f);
 }
@@ -195,7 +200,7 @@ void RenderCanvas::UnexpectedTerminationReplayCallBack(void)
 
 	std::string msg("Unexpected stream termination replay");
 	WindowStatus(wxString(msg.c_str()));
-	mp_app->ReportLog(ReportLogOp::flush, std::string("whew!"));
+	mp_app->ReportLog(ReportLogOp::flush, std::string("Attempting replay..."));
 
 	Play();
 
@@ -289,16 +294,18 @@ void RenderCanvas::StepBackButton_cb(GLButton* button)
 
 		VideoStreamConfig* vsc = mp_videoWindow->mp_streamConfig;
 
-		if (mp_ffvideo->IsPlaybackPaused() && (vsc->m_type == STREAM_TYPE::FILE))
+		if (vsc->m_type == STREAM_TYPE::FILE)
 		{
-			WindowStatus(wxString("Stepping backward 1 frame."));
-			mp_noticeMgr->AddNotice(std::string("Stepping backward 1 frame."), 1.0f);
-			mp_ffvideo->Step(FFVIDEO_FRAMESTEP_DIRECTION::BACKWARD);
-		}
-		else
-		{
-			Pause();
-
+			if (mp_ffvideo->IsPlaybackPaused())
+			{
+				WindowStatus(wxString("Stepping backward 1 frame."));
+				mp_noticeMgr->AddNotice(std::string("Stepping backward 1 frame."), 1.0f);
+				mp_ffvideo->Step(FFVIDEO_FRAMESTEP_DIRECTION::BACKWARD);
+			}
+			else
+			{
+				Pause();
+			}
 		}
 	}
 	else
