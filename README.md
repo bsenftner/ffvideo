@@ -71,5 +71,4 @@ Known issues:
 
 (Rebuilding against FFmpeg 4.2.3 seems to have removed the replay instabilities, but it's not as fast anymore. See note, mid-readme)
 
-- how USB cameras initialize impact other non-USB cameras if the play request is simultaneous across USB and non-USB cameras
-  - the work around for the moment is to play USB cameras individually, before using the "Play All" menu option for any other video windows
+PlayAll has been modified to play USB cameras first, one by one, and then the other stream types are played simultaniously. This seems to sidestep USB stream startups being non-thread safe. 
