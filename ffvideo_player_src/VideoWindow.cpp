@@ -49,6 +49,7 @@ const long ID_SAVEWINDOWCONFIG_MENU = wxNewId();
 const long ID_RESTOREWINDOWCONFIG_MENU = wxNewId();
 
 const long ID_PLAYALL_MENU = wxNewId();
+const long ID_STOPALL_MENU = wxNewId();
 const long ID_CLOSEALL_MENU = wxNewId();
 
 const long ID_ABOUT_MENU = wxNewId();
@@ -125,6 +126,8 @@ VideoWindow::VideoWindow(TheApp* app, int32_t id)
 	//
 	mp_menu->Append(ID_PLAYALL_MENU, "Play All (not playing)");
 	//
+	mp_menu->Append(ID_STOPALL_MENU, "Stop All");
+	//
 	mp_menu->AppendSeparator();
 	//
 	mp_menu->Append(ID_CLOSEALL_MENU, "Close all windows and quit");
@@ -166,6 +169,7 @@ VideoWindow::VideoWindow(TheApp* app, int32_t id)
 	Connect(ID_RESTOREWINDOWCONFIG_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnRestoreWindowConfig);
 
 	Connect(ID_PLAYALL_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnPlayAll);
+	Connect(ID_STOPALL_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnStopAll);
 	Connect(ID_CLOSEALL_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnCloseAllAndQuit);
 
 	Connect(ID_ABOUT_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnAbout);
@@ -596,13 +600,49 @@ void VideoWindow::OnPlayAll(wxCommandEvent& WXUNUSED(event))
 	if (m_terminating)
 		return;
 
+	// experimental logic:
+	// when a USB stream's play begins, an FFmpeg query mechanism is used
+	// that is not thread safe. So this is me being lazy about preventing
+	// collisions: simply play USB streams first, with a delay between them
+	bool played_any(false);
 	for (size_t i = 0; i < mp_app->m_videoWindowPtrs.size(); i++)
 	{
-		if (mp_app->m_videoWindowPtrs[i]->mp_renderCanvas->m_is_playing == false)
-			mp_app->m_videoWindowPtrs[i]->mp_renderCanvas->Play();
+		VideoWindow* vw = mp_app->m_videoWindowPtrs[i];
+
+		if ((vw->mp_renderCanvas->m_is_playing == false) &&
+		    (vw->mp_streamConfig->m_type == STREAM_TYPE::USB))
+		{
+			vw->mp_renderCanvas->Play();
+			played_any = true;
+			wxMilliSleep(400);
+		}
+	}
+	
+	// now play all the other streams:
+	for (size_t i = 0; i < mp_app->m_videoWindowPtrs.size(); i++)
+	{
+		VideoWindow* vw = mp_app->m_videoWindowPtrs[i];
+
+		if ((vw->mp_renderCanvas->m_is_playing == false) &&
+				(vw->mp_streamConfig->m_type != STREAM_TYPE::USB))
+			 vw->mp_renderCanvas->Play();
 	}
 }
 
+////////////////////////////////////////////////////////////////////////
+void VideoWindow::OnStopAll(wxCommandEvent& WXUNUSED(event))
+{
+	if (m_terminating)
+		return;
+
+	for (size_t i = 0; i < mp_app->m_videoWindowPtrs.size(); i++)
+	{
+		VideoWindow* vw = mp_app->m_videoWindowPtrs[i];
+
+		if (vw->mp_renderCanvas->m_is_playing)
+			vw->mp_renderCanvas->Stop();
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////
 void VideoWindow::OnCloseAllAndQuit(wxCommandEvent& WXUNUSED(event))
@@ -1033,7 +1073,7 @@ void VideoWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 	desc += "* a C++ example FFmpeg based, multi-threaded, multi-window video player in wxWidgets,\n";
 	desc += "* a framework for learning, video analysis, experiments, and model training,\n";
 	desc += "* examples of integration with sqlite3, OpenGL, libjpeg-turbo, and Dlib, plus\n";
-	desc += "* face detection, face feature identification, and general mad computer science.\n";
+	desc += "* face detection, face feature identification, and general mad computer science.\n\n";
 	//
 	info.SetDescription(desc);
 

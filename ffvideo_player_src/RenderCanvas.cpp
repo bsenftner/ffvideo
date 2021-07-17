@@ -145,7 +145,7 @@ RenderCanvas::~RenderCanvas()
 	if (m_is_playing)
 	{
 		m_terminating = true;
-		// Stop();
+
 		mp_ffvideo->KillStream();
 		wxMilliSleep(500);
 		mp_ffvideo->SetDisplayFrameCallback(NULL, NULL);

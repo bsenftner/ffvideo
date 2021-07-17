@@ -98,6 +98,7 @@ public:
 	void OnResetVideoWindow(wxCommandEvent& event);
 
 	void OnPlayAll(wxCommandEvent& event);
+	void OnStopAll(wxCommandEvent& event);
 	void OnCloseAllAndQuit(wxCommandEvent& event);
 
 	void OnAbout(wxCommandEvent& event);

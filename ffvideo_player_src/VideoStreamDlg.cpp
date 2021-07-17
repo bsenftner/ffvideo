@@ -64,11 +64,14 @@ VideoStreamConfigDlg::VideoStreamConfigDlg(TheApp* app, wxWindow* parent, wxWind
 	  mp_encodeBasename_button(NULL), mp_exampleFrameEncodePath(NULL), mp_encodeFPSCtrl(NULL), mp_encodeWHCtrl(NULL), mp_font_button(NULL),
 	  wxDialog(parent, id, title, wxDefaultPosition, wxSize(800, 816) ) 
 {
-	// first build m_namesMap:
-
+	// m_namesMap is a key/value pairing of stream names and stream ids. This is used
+	// by the stream name pull-down selection control to create a functionality where
+	// selecting different stream names populates all the dialog controls with the
+	// last saved configuration of that named stream. So, first build m_namesMap:
+	//
 	// placing ourselves first in the map:
 	m_namesMap[params->m_name] = params->m_id;
-
+	//
 	// now get all other video stream names and add them to the map:
 	std::string dataKey = "app/total_vw";
 	int32_t max_stream_names = mp_app->mp_config->ReadInt(dataKey, 0 );
@@ -81,16 +84,16 @@ VideoStreamConfigDlg::VideoStreamConfigDlg(TheApp* app, wxWindow* parent, wxWind
 		
 		// if not ourselves (because we're already in the map)
 		if ((stream_name.size() > 0) && (stream_name.compare( params->m_name ) != 0))
-			m_namesMap[stream_name] = i;	
+			 m_namesMap[stream_name] = i;	
 	}
 
 	// build the GUI controls:
 
-	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);   // the outter container is a vertical sizer
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);   // the outside container is a vertical sizer
 	wxPanel*    panel = new wxPanel(this, -1);			 // vbox will hold panel and hbox
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
-	const int vOff = -6;  // vertical offset used by ctrls but not static text, to better align them visually
+	const int vOff = -6;  // vertical offset used by ctrls to better align visually
 	const int ctrlH = 32; // vertical height of our controls
 	const int lh = 25;		// text height of one line
 	const int ctrlLeft = 150;
@@ -318,7 +321,7 @@ VideoStreamConfigDlg::VideoStreamConfigDlg(TheApp* app, wxWindow* parent, wxWind
 	//
 	mp_encodeFPSCtrl = new wxTextCtrl(panel, ID_VIDEOSTREAMDLG_ENCODEFPS, bsjnk.c_str(), wxPoint(ctrlLeft, 30 + ctrlsLine * ctrlH + vOff), wxSize(60, lh));
 
-	wxStaticText* enfsAddtl_txt = new wxStaticText(panel, -1, "0 = current playback fps, else is movie encoding fps", wxPoint(ctrlLeft + 72, 30 + ctrlsLine * ctrlH) );
+	wxStaticText* enfsAddtl_txt = new wxStaticText(panel, -1, "Movie encoding fps", wxPoint(ctrlLeft + 72, 30 + ctrlsLine * ctrlH) );
 
 
 	ctrlsLine++;
@@ -353,7 +356,10 @@ VideoStreamConfigDlg::VideoStreamConfigDlg(TheApp* app, wxWindow* parent, wxWind
 
 	mp_font_button = new wxButton(panel, ID_VIDEOSTREAMDLG_FONTBTTN, wxString("Change"), wxPoint(ctrlLeft, 30 + ctrlsLine * ctrlH + vOff), wxSize(150, lh));
 
-	/* 
+	/* this control varies in size so it can display the selected font with size and styling.
+	   I don't feel like figuring out a layout where this dynamic sizing does not muckup 
+		 the dialog's general layout, so this control is commented out:
+
 	wxFontStyle style = (m_vsc.m_font_italic) ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL;
 
 	mp_overlayFont = new wxFont(m_vsc.m_font_point_size, wxFONTFAMILY_DEFAULT, style, wxFONTWEIGHT_BOLD, 
@@ -377,6 +383,7 @@ VideoStreamConfigDlg::VideoStreamConfigDlg(TheApp* app, wxWindow* parent, wxWind
 	vbox->Add(hbox, 1, wxALIGN_CENTER | wxTOP | wxBOTTOM, 10);
 
 
+	// connect all the controls with their various event callback/handlers:
 
 	Connect(ID_VIDEOSTREAMDLG_NAMEEDIT, wxEVT_COMMAND_TEXT_UPDATED, (wxObjectEventFunction)&VideoStreamConfigDlg::OnNameEdit);
 	Connect(ID_VIDEOSTREAMDLG_TYPECTRL, wxEVT_COMMAND_COMBOBOX_SELECTED, (wxObjectEventFunction)&VideoStreamConfigDlg::OnVideoType);
@@ -420,11 +427,11 @@ VideoStreamConfigDlg::VideoStreamConfigDlg(TheApp* app, wxWindow* parent, wxWind
 
 	Connect(ID_VIDEOSTREAMDLG_ENCODEWH, wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&VideoStreamConfigDlg::OnEncodeWH);
 
-
+	// this is that font control that changes size with its selection:
 	// Connect(ID_VIDEOSTREAMDLG_FONTPICK, wxEVT_FONTPICKER_CHANGED, (wxObjectEventFunction)&VideoStreamConfigDlg::OnFontEdit);
 	Connect(ID_VIDEOSTREAMDLG_FONTBTTN, wxEVT_BUTTON, (wxObjectEventFunction)&VideoStreamConfigDlg::OnFontButton);
 
-
+	// intercepting the "Ok" button for final field vaidation, as in is the combination of params possible?
 	Connect(wxID_OK, wxEVT_BUTTON, (wxObjectEventFunction)&VideoStreamConfigDlg::OnOkayButton);
 
 	SetSizer(vbox);
@@ -550,8 +557,6 @@ void VideoStreamConfigDlg::OnVideoType(wxCommandEvent& event)
 	}
 }
 
-
-
 ///////////////////////////////////////////////////////////////////
 void VideoStreamConfigDlg::OnLoopMediaFiles(wxCommandEvent& event)
 {
@@ -562,8 +567,10 @@ void VideoStreamConfigDlg::OnLoopMediaFiles(wxCommandEvent& event)
 	m_vsc.m_loop_media_files = c->GetValue();
 }
 
-
 ///////////////////////////////////////////////////////////////////
+// a stream's "info" is one of a) file path, b) USB pin or c) URL;
+// To accomidate URLs from IP video services that are very long, 
+// this allows up to 2084 length strings:
 void VideoStreamConfigDlg::OnInfoEdit(wxCommandEvent& event)
 {
 	wxTextCtrl* c = (wxTextCtrl*)this->FindWindow(ID_VIDEOSTREAMDLG_INFOEDIT);
@@ -573,13 +580,12 @@ void VideoStreamConfigDlg::OnInfoEdit(wxCommandEvent& event)
 
 		// verify there is a string there, and it's not too big:
 		uint32_t l = wxStrlen(s);
-		if (l >= 0 && l < 1024)
+		if (l >= 0 && l < 2084)
 		{
 			m_vsc.m_info = s.c_str();
 		}
 	}
 }
-
 
 ///////////////////////////////////////////////////////////////////
 void VideoStreamConfigDlg::OnPostProcessFilterEdit(wxCommandEvent& event)
@@ -616,22 +622,24 @@ void VideoStreamConfigDlg::OnFontButton(wxCommandEvent& event)
 	fontData.SetInitialFont( font );
 
 	wxFontDialog* fontDialog = new wxFontDialog(this, fontData);
-
-	if (fontDialog->ShowModal() == wxID_OK) 
+	if (fontDialog)
 	{
-		wxFontData& usrFontData = fontDialog->GetFontData();
+		fontDialog->SetTitle( wxString::Format( "%s : Video Overlay Font", m_vsc.m_name.c_str() ) );
+		if (fontDialog->ShowModal() == wxID_OK) 
+		{
+			wxFontData& usrFontData = fontDialog->GetFontData();
 
-		wxFont font = usrFontData.GetChosenFont();
-		m_vsc.m_font_face_name = font.GetFaceName();
-		m_vsc.m_font_point_size = font.GetPointSize();
-		m_vsc.m_font_italic = !(font.GetStyle() != wxFONTSTYLE_ITALIC);
-		m_vsc.m_font_underlined = font.GetUnderlined();
-		m_vsc.m_font_strike_thru = font.GetStrikethrough();
+			wxFont font = usrFontData.GetChosenFont();
+			m_vsc.m_font_face_name = font.GetFaceName();
+			m_vsc.m_font_point_size = font.GetPointSize();
+			m_vsc.m_font_italic = !(font.GetStyle() != wxFONTSTYLE_ITALIC);
+			m_vsc.m_font_underlined = font.GetUnderlined();
+			m_vsc.m_font_strike_thru = font.GetStrikethrough();
 
-		wxColour usrFontColor = usrFontData.GetColour();
-		m_vsc.m_font_color.Set( usrFontColor.Red() / 255.0f, usrFontColor.Green() / 255.0f, usrFontColor.Blue() / 255.0f );
+			wxColour usrFontColor = usrFontData.GetColour();
+			m_vsc.m_font_color.Set( usrFontColor.Red() / 255.0f, usrFontColor.Green() / 255.0f, usrFontColor.Blue() / 255.0f );
+		}
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
