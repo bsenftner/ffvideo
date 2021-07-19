@@ -106,7 +106,7 @@ private:
 };
 
 
-//------------------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////////////////////////
 class FFVIDEO_FrameFilter
 {
 	friend class FFVideo_FrameDestination;
@@ -131,6 +131,7 @@ private:
 			avfilter_graph_free( &mp_filter_graph );
 	};
 
+	///////////////////////////////////////////////////////////////////////////////////////////
 	// called when a new filter graph is needed, i.e. any time width, height or format change:
 	int Init( AVFormatContext* p_format_context, AVStream* p_video_stream, 
 						AVFrame* p_video_frame, std::string& post_process )
