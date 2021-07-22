@@ -70,7 +70,7 @@ After decompression, it should be placed in the project's bin directory, just be
 New: 
 Added a menu option for display of detected faces. Beta, only displays first detected face per frame at the moment.
 
-![detectedFaceDisplay01](https://user-images.githubusercontent.com/1216815/126713258-f1d23ba1-3fce-4038-8cde-e1567e365362.png)
+<img src="https://user-images.githubusercontent.com/1216815/126713258-f1d23ba1-3fce-4038-8cde-e1567e365362.png" width=400>
 
 Known issues:
 
