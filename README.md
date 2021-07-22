@@ -67,6 +67,11 @@ Dlib's face detection model file shape_predictor_68_face_landmarks.dat is also r
    
 After decompression, it should be placed in the project's bin directory, just beneath the project's git root
 
+New: 
+Added a menu option for display of detected faces. Beta, only displays first detected face per frame at the moment.
+
+![detectedFaceDisplay01](https://user-images.githubusercontent.com/1216815/126713258-f1d23ba1-3fce-4038-8cde-e1567e365362.png)
+
 Known issues:
 
 (Rebuilding against FFmpeg 4.2.3 seems to have removed the replay instabilities, but it's not as fast anymore. See note, mid-readme)
