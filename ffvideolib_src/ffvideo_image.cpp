@@ -543,6 +543,59 @@ bool FFVideo_Image::Clone(uint8_t* p_pixels, uint32_t height, uint32_t width, ui
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// expected to contain image data which is clipped to a sub-rect, making this image that sub-rect
+bool FFVideo_Image::ClipToRect( uint32_t xmin, uint32_t ymin, uint32_t xmax, uint32_t ymax )
+{
+	if (!mp_pixels || xmin >= xmax || ymin >= ymax) 
+	   return false;
+		 
+	uint32_t new_w = xmax - xmin + 1;
+	uint32_t new_h = ymax - ymin + 1;
+
+	if (xmax >= m_width || ymax >= m_height)
+	   return false;
+
+	uint32_t n_bytes_per_pixel(0);
+	uint32_t n_bytes_per_old_row(0),        n_bytes_per_new_row(0);
+	uint32_t n_pixels_per_old_row(m_width), n_pixels_per_new_row(new_w);
+
+	if (m_type == 0 || m_type == 3) 
+	{
+		n_bytes_per_pixel = 3;	
+	}
+	else if (m_type == 1 || m_type == 4) 
+	{
+		n_bytes_per_pixel = 4;
+	}
+	else if (m_type == 2) 
+	{
+		n_bytes_per_pixel = 1;
+	}
+	n_bytes_per_old_row = n_pixels_per_old_row * n_bytes_per_pixel;
+	n_bytes_per_new_row = n_pixels_per_new_row * n_bytes_per_pixel;
+
+	// allocate new pixels for sub-rect:
+	uint8_t* p_new_pixels = new uint8_t[n_bytes_per_new_row * new_h]; 
+
+	for (uint32_t i = ymin, j = 0; i <= ymax; i++, j++)
+	{
+		// figure out pointer to subrect scanline in src data:
+		uint8_t* left_src = &mp_pixels[ n_bytes_per_old_row * i + xmin * n_bytes_per_pixel];
+
+		uint8_t* left_dst = &p_new_pixels[j * n_bytes_per_new_row];
+
+		memcpy( left_dst, left_src, n_bytes_per_new_row ); 
+	}
+
+	delete [] mp_pixels;
+	mp_pixels = p_new_pixels;
+	m_width = new_w;
+	m_height = new_h;
+
+	return true;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 void FFVideo_Image::MirrorVertical(void)

@@ -163,7 +163,7 @@ void RenderCanvas::DrawFaces(void)
 		// this is the display size of the video frame:
 		FF_Vector2D im_size( (float)m_frame.m_width * m_zoom, (float)m_frame.m_height * m_zoom );
 
-		// std::string msg = mp_app->FormatStr( "dlib im %1.2f x %1.2f", m_detectImSize.x, m_detectImSize.y );
+		// std::string msg = mp_app->FormatStr( "also have %d face images", (int32_t)m_facesImages.size() );
 		// SendOverlayNoticeEvent( msg, 40 );
 
 		FF_Vector2D landmark_scale( im_size.x / m_detectImSize.x, im_size.y / m_detectImSize.y );
@@ -208,6 +208,7 @@ void RenderCanvas::DrawFaces(void)
 		}
 		else for (int32_t i = 0; i < m_detections.size(); i++)
 		{
+		  // faceLandmarks is not enabled, so we'll render wireframe rects over the faces:
 			dlib::rectangle& rect = m_detections[i];
 			float left   = (float)rect.left();
 			float top    = (float)rect.top();
@@ -238,6 +239,31 @@ void RenderCanvas::DrawFaces(void)
 			glEnd();
 
 			glLineWidth( 1.0f );
+		}
+
+		if (IsFaceImagesEnabled())
+		{
+			// showing only the tallest one for the moment: 
+			int32_t tallest = -1;
+			for (size_t i = 0; i < m_facesImages.size(); i++)
+			{
+				if (i == 0)
+				   tallest = 0;
+				else if (m_facesImages[i].m_height > m_facesImages[tallest].m_height)
+				   tallest = i;
+			}
+			if (tallest > -1)
+			{
+				unsigned char* pix = m_facesImages[tallest].mp_pixels;
+				int32_t				 w   = m_facesImages[tallest].m_width;
+				int32_t				 h   = m_facesImages[tallest].m_height;
+
+				glRasterPos2f(5.0f, 5.0f);
+				glPixelZoom(m_zoom, m_zoom);
+				// glPixelZoom(1.0f, 1.0f);
+
+				glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)pix);
+			}
 		}
 
 		// debug logic, turn off after one frame:
@@ -286,11 +312,12 @@ void RenderCanvas::OnPaint(wxPaintEvent& WXUNUSED(event))
 	scratch = mp_videoWindow->mp_app->FormatStr("Name: %s", vsc->m_name.c_str());
 	m_text.push_back(scratch);
 
-	/*
-	scratch = mp_videoWindow->mp_app->FormatStr("canvas size %d x %d", m_winSize.x, m_winSize.y);
-	m_text.push_back(scratch);
 
 	scratch = mp_videoWindow->mp_app->FormatStr("video frame scaling %2.2f", m_zoom);
+	m_text.push_back(scratch);
+
+	/*
+	scratch = mp_videoWindow->mp_app->FormatStr("canvas size %d x %d", m_winSize.x, m_winSize.y);
 	m_text.push_back(scratch);
 
 	scratch = mp_videoWindow->mp_app->FormatStr("Mouse pos %d x %d", m_mpos.x, m_mpos.y);
@@ -368,6 +395,39 @@ void RenderCanvas::OnPaint(wxPaintEvent& WXUNUSED(event))
 		scratch = mp_videoWindow->mp_app->FormatStr("Frame exporting queue length %d", mp_ffvideo->GetFrameExportingQueueSize() );
 		m_text.push_back(scratch);
 	}
+
+
+
+
+	if (m_detections.size() > 0)
+	{
+		if (IsFaceImagesEnabled())
+		{
+			// showing only the tallest one for the moment: 
+			int32_t tallest = -1;
+			for (size_t i = 0; i < m_facesImages.size(); i++)
+			{
+				if (i == 0)
+					tallest = 0;
+				else if (m_facesImages[i].m_height > m_facesImages[tallest].m_height)
+					tallest = i;
+			}
+			if (tallest > -1)
+			{
+				int32_t left   = (int32_t)m_detections[tallest].left();
+				int32_t top    = (int32_t)m_detections[tallest].top();
+				int32_t right  = (int32_t)m_detections[tallest].right();
+				int32_t bottom = (int32_t)m_detections[tallest].bottom();
+				
+				scratch = mp_videoWindow->mp_app->FormatStr("left %d, bottom %d  right %d, top %d", left, bottom, right, top );
+				m_text.push_back(scratch);
+			}
+		}
+	}
+
+
+
+
 
 	CalcVideoPlacement();	// of the video frame
 	Render();							// the video frame first, video ctrls, finall overlay text

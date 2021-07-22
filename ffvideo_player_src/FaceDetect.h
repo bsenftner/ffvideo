@@ -21,6 +21,9 @@ public:
 	void GetDlibImageSize( FF_Vector2D& size ) { size.Set( m_dlib_real_im.nc(), m_dlib_real_im.nr() ); }
 
 	bool GetFaceBoxes( std::vector<dlib::rectangle>& detections );
+
+	void GetFaceImages( std::vector<dlib::rectangle>& detections, std::vector<FFVideo_Image>& face_images );
+
 	bool GetFaceLandmarkSets( std::vector<dlib::rectangle>& detections, 
 	                          std::vector<dlib::full_object_detection>& faceLandmarkSets );
 	void GetLandmarks( dlib::full_object_detection& oneFace_landmarkSet,
@@ -39,9 +42,10 @@ private:
 	dlib::frontal_face_detector			m_detector;
 	dlib::shape_predictor						m_sp;
 
-	bool									         m_image_set;
-	dlib::array2d<dlib::rgb_pixel> m_dlib_im;
-	dlib::array2d<dlib::rgb_pixel> m_dlib_real_im;
+	FFVideo_Image										m_im;
+	bool									          m_image_set;
+	dlib::array2d<dlib::rgb_pixel>  m_dlib_im;
+	dlib::array2d<dlib::rgb_pixel>  m_dlib_real_im;
 };
 
 
@@ -59,6 +63,7 @@ public:
 		m_frame_num         = fdf.m_frame_num;
 		m_detections        = fdf.m_detections;
 		m_facesLandmarkSets = fdf.m_facesLandmarkSets;
+		m_facesImages       = fdf.m_facesImages;
 	}
 
 	// copy assignement operator
@@ -70,6 +75,7 @@ public:
 			m_frame_num         = fdf.m_frame_num;
 			m_detections        = fdf.m_detections;
 			m_facesLandmarkSets = fdf.m_facesLandmarkSets;
+			m_facesImages       = fdf.m_facesImages;
 		}
 		return (*this);
 	}
@@ -78,6 +84,7 @@ public:
 	int32_t																		m_frame_num;
 	std::vector<dlib::rectangle>							m_detections;
 	std::vector<dlib::full_object_detection>  m_facesLandmarkSets;
+	std::vector<FFVideo_Image>                m_facesImages;
 };
 
 class RenderCanvas;
@@ -90,7 +97,7 @@ public:
 	  mp_frameProcessingThread(NULL), m_stop_frame_processing_loop(false), 
 		m_frame_processing_loop_ended(false), mp_frame_cb(NULL), mp_frame_object(NULL),
 		mp_faceDetector(NULL), m_faceDetectorInitialized(false), m_faceDetectorEnabled(false),
-		m_faceFeaturesEnabled(false) {};
+		m_faceFeaturesEnabled(false), m_faceImagesEnabled(false) {};
 
 	// 2nd required for for thread constructor
 	FaceDetectionThreadMgr(const FFVideo_FrameExporter& obj) {}
@@ -185,6 +192,7 @@ public:
 	bool																			m_faceDetectorInitialized;
 	bool																			m_faceDetectorEnabled;
 	bool																			m_faceFeaturesEnabled;
+	bool																			m_faceImagesEnabled;
 
 	mutable std::shared_mutex									m_queue_lock;
 	std::queue<FaceDetectionFrame>						m_frameQue;

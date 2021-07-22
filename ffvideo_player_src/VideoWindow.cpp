@@ -56,6 +56,7 @@ const long ID_ABOUT_MENU = wxNewId();
 
 const long ID_ENABLE_FACE_DETECTION_MENU = wxNewId();
 const long ID_ENABLE_FACE_FEATURE_DISPLAY_MENU = wxNewId();
+const long ID_ENABLE_FACE_IMAGES_DISPLAY_MENU = wxNewId();
 
 const long ID_TOGGLE_THEME_MENU = wxNewId();
 const long ID_TILE_WINDOWS_MENU = wxNewId();
@@ -142,6 +143,8 @@ VideoWindow::VideoWindow(TheApp* app, int32_t id)
 	//
 	mp_faceFeaturesItem = mp_optionsMenu->Append(ID_ENABLE_FACE_FEATURE_DISPLAY_MENU, "Enable face feature display");
 	//
+	mp_faceImagesItem = mp_optionsMenu->Append(ID_ENABLE_FACE_IMAGES_DISPLAY_MENU, "Enable face images display");
+	//
 	mp_optionsMenu->AppendSeparator();
 	//
 	mp_themeItem = mp_optionsMenu->Append(ID_TOGGLE_THEME_MENU, "Switch to \"Light Theme\"");
@@ -180,6 +183,7 @@ VideoWindow::VideoWindow(TheApp* app, int32_t id)
 
 	Connect(ID_ENABLE_FACE_DETECTION_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleFaceDetection);
 	Connect(ID_ENABLE_FACE_FEATURE_DISPLAY_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleFaceFeatures);
+	Connect(ID_ENABLE_FACE_IMAGES_DISPLAY_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleFaceImages);
 	
 
 	Connect(ID_TOGGLE_THEME_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleTheme);
@@ -1139,6 +1143,29 @@ void VideoWindow::OnToggleFaceFeatures(wxCommandEvent& WXUNUSED(event))
 			msg = "Enable face feature display";
 		}
 		mp_faceFeaturesItem->SetItemLabel(msg);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////
+void VideoWindow::OnToggleFaceImages(wxCommandEvent& WXUNUSED(event))
+{
+	if (m_terminating)
+		return;
+
+	mp_renderCanvas->EnableFaceImages( !mp_renderCanvas->IsFaceImagesEnabled() );
+
+	if (mp_faceImagesItem)
+	{
+		wxString msg;
+		if (mp_renderCanvas->IsFaceImagesEnabled())
+		{
+			msg = "Disable face images display";
+		}
+		else
+		{
+			msg = "Enable face images display";
+		}
+		mp_faceImagesItem->SetItemLabel(msg);
 	}
 }
 

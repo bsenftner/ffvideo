@@ -158,8 +158,10 @@ public:
 	bool IsFaceDetectionInitialized( void ) { return m_faceDetectMgr.m_faceDetectorInitialized; }
 	bool IsFaceDetectionEnabled( void ) { return m_faceDetectMgr.m_faceDetectorEnabled; }
 	bool IsFaceLandmarksEnabled( void ) { return m_faceDetectMgr.m_faceFeaturesEnabled; }
+	bool IsFaceImagesEnabled( void ) { return m_faceDetectMgr.m_faceImagesEnabled; }
 	bool EnableFaceDetection( bool enable );
 	bool EnableFaceLandmarks( bool enable );
+	bool EnableFaceImages( bool enable );
 
 	// framebuffer rendering:
 
@@ -233,7 +235,7 @@ public:
 	FF_Vector2D																m_detectImSize;
 	std::vector<dlib::rectangle>							m_detections;
 	std::vector<dlib::full_object_detection>  m_facesLandmarkSets;
-
+	std::vector<FFVideo_Image>								m_facesImages;
 
 	wxDECLARE_EVENT_TABLE();
 };

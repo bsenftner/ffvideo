@@ -69,6 +69,11 @@ void RenderCanvas::FrameFaceDetectionCallBack(FaceDetectionFrame& fdf)
 
 		m_detections = fdf.m_detections;
 
+		if (IsFaceImagesEnabled())
+		{
+			m_facesImages = fdf.m_facesImages;
+		}
+
 		if (IsFaceLandmarksEnabled())
 		{
 			m_facesLandmarkSets = fdf.m_facesLandmarkSets;
@@ -430,6 +435,19 @@ bool RenderCanvas::EnableFaceLandmarks( bool enable )
 		return false;
 
 	m_faceDetectMgr.m_faceFeaturesEnabled = enable;
+	return true;
+}
+
+///////////////////////////////////////////////////////////////////
+// called by a wxWidgets menu handler in a VideoWindow
+bool RenderCanvas::EnableFaceImages( bool enable )
+{
+	if (!mp_app) 
+		return false;
+	if (!mp_app->m_we_are_launched || m_terminating)
+		return false;
+
+	m_faceDetectMgr.m_faceImagesEnabled = enable;
 	return true;
 }
 

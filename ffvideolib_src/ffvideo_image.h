@@ -24,6 +24,7 @@ public:
 
 	bool     Clone(const FFVideo_Image& im);
 	bool     Clone(uint8_t* p_pixels, uint32_t height, uint32_t width, uint32_t type = 1);
+	bool     ClipToRect( uint32_t xmin, uint32_t ymin, uint32_t xmax, uint32_t ymax ); 
 	bool     Reallocate(uint32_t height, uint32_t width, uint32_t type = 1);
 	void     MirrorVertical(void);
 	void     Empty(void);

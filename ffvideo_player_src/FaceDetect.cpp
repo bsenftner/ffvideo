@@ -31,8 +31,10 @@ FaceDetector::~FaceDetector()
 ////////////////////////////////////////////////////////////////////////
 void FaceDetector::SetImage( FFVideo_Image& im )
 {
+  // check if our class instance m_dlib_im is not the same w,h as the passed image:
 	if (m_dlib_im.nc() != im.m_width || m_dlib_im.nr() != im.m_height)
 	{
+	  // reallocate m_dlib_im to same size as passed image:
 		m_dlib_im.set_size( im.m_height, im.m_width );
 
 		// see comment below:
@@ -41,6 +43,10 @@ void FaceDetector::SetImage( FFVideo_Image& im )
 		m_dlib_real_im.set_size( ((int32_t)(float)im.m_height * shrink_factor + 0.5f), ((int32_t)(float)im.m_width * shrink_factor + 0.5f) );
 	}
 
+	// remember in this format, incase we're asked for the face rects later:
+	m_im.Clone( im );
+
+	// copy the FFvideo_Image format image to m_dlib_im, a dlib format image:
 	for (uint32_t y = 0; y < im.m_height - 1; y++)
 	{
 		uint32_t iy = im.m_height - y - 1;
@@ -69,6 +75,36 @@ bool FaceDetector::GetFaceBoxes( std::vector<rectangle>& detections )
 
 	return false;
 }
+
+////////////////////////////////////////////////////////////////////////
+void FaceDetector::GetFaceImages( std::vector<rectangle>& detections, std::vector<FFVideo_Image>& face_images )
+{
+	if (m_image_set)
+	{
+		face_images.clear();
+		for (size_t i = 0; i < detections.size(); i++)
+		{
+			// make copy of video frame:
+			face_images.push_back(m_im);
+
+			// get a reference to the copy:
+			FFVideo_Image& im = face_images.back();
+
+			// get a face detection rect (note, in a scaled space!):
+			rectangle& oneFaceRect = detections[i];
+
+			float left  = (float)oneFaceRect.left() / (float)m_dlib_real_im.nc();			// normalized
+			float right = (float)oneFaceRect.right() / (float)m_dlib_real_im.nc(); 
+			//
+			float bottom = 1.0f - (float)oneFaceRect.bottom() / (float)m_dlib_real_im.nr();
+			float top    = 1.0f - (float)oneFaceRect.top() / (float)m_dlib_real_im.nr();
+
+			// clip our in-vector image to the face rect of that detection:
+			im.ClipToRect( (uint32_t)(left*im.m_width), (uint32_t)(bottom*im.m_height), (uint32_t)(right*im.m_width), (uint32_t)(top*im.m_height) );
+		}
+	}
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 bool FaceDetector::GetFaceLandmarkSets( std::vector<rectangle>& detections, 
@@ -135,6 +171,10 @@ void FaceDetector::GetLandmarks( dlib::full_object_detection& oneFace_landmarkSe
 				insideLips.push_back(vec);
 		}
 	}
+	
+
+
+
 
 ////////////////////////////////////////////////////////////////////////
 void FaceDetectionThreadMgr::Add(void* p_object, FFVideo_Image& im, int32_t frame_num)
@@ -148,6 +188,8 @@ void FaceDetectionThreadMgr::Add(void* p_object, FFVideo_Image& im, int32_t fram
 ////////////////////////////////////////////////////////////////////////
 void FaceDetectionThreadMgr::Add(FFVideo_Image& im, int32_t frame_num)
 {
+  // if we are not keeping up, meaning as this is called and images are added to m_frameQue,
+	// if we are not popping them off equally as fast, we allow frame loss to maintain realtime:
 	if (Size() < 3)
 	{
 		FaceDetectionFrame fdf;
@@ -216,6 +258,15 @@ void FaceDetectionThreadMgr::FrameProcessingLoop(void)
 						break;
 
 					mp_faceDetector->GetFaceBoxes( fdf.m_detections );
+
+					// this work is time consuming, so check if we're supposed to quit: 
+					if (m_stop_frame_processing_loop)
+						break;
+
+					if (m_faceImagesEnabled)
+					{
+						mp_faceDetector->GetFaceImages( fdf.m_detections, fdf.m_facesImages );
+					}
 
 					// this work is time consuming, so check if we're supposed to quit: 
 					if (m_stop_frame_processing_loop)
