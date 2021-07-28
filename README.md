@@ -1,6 +1,7 @@
 # FFVideo
+##### <i>Last update July 28, 2021</i></br>
 An example FFmpeg lib, and wxWidgets Player application with video filters and face detection, it is a no-audio video player intended for video experiments and developers 
-learning how to code media applications.
+learning how to code media applications. 
 
 ![FFVideo00](https://user-images.githubusercontent.com/1216815/125710205-65eaf07c-31b3-43e0-b660-867780cbaba5.png)
 
@@ -71,6 +72,12 @@ New:
 Added a menu option for display of detected faces. Beta, only displays first detected face per frame at the moment.
 
 <img src="https://user-images.githubusercontent.com/1216815/126713258-f1d23ba1-3fce-4038-8cde-e1567e365362.png" width=400>
+
+New July 28, 2021:
+Modified the display of detected faces to optionally <i>standardize the collected face images</i> to be presented as close as possible to <b>Standard Passport Format</b>, with the eyes rotated to be level and re-evaluated to a 200x200 pixel image, regardless of source dimensions. 
+
+![StandardizedFaceImages](https://user-images.githubusercontent.com/1216815/127404166-f7139c59-a60c-4078-9ce5-cbe8a576f8aa.jpg)
+
 
 Known issues:
 
