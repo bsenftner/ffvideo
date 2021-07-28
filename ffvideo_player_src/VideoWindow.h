@@ -65,6 +65,7 @@ public:
 	wxMenuItem*					mp_faceDetectItem;
 	wxMenuItem*					mp_faceFeaturesItem;
 	wxMenuItem*					mp_faceImagesItem;
+	wxMenuItem*					mp_faceImagesStandarizedItem;
 
 	wxMenuItem*					mp_themeItem;
 	wxMenuItem*					mp_tileWindowsItem;
@@ -124,6 +125,7 @@ public:
 	void OnToggleFaceDetection(wxCommandEvent& event);
 	void OnToggleFaceFeatures(wxCommandEvent& event);
 	void OnToggleFaceImages(wxCommandEvent& event);
+	void OnToggleFaceImageStandarization(wxCommandEvent& event);
 
 	void OnToggleTheme(wxCommandEvent& event);
 	void OnTileWindows(wxCommandEvent& event);

@@ -142,10 +142,16 @@ void HelpWindow::BuildFeatureBullets( void )
 			The <B>Options</B> pull down menu has these options:</br>
 			<UL>
 				<LI>
-					<B>Enable/Disable Face Detection</B> toggles the demo <i>video experiment</i>
+					<B>Enable/Disable Face Detection</B> toggles use of <i>Dlib based <b>Face Detection</b></i>
 				</LI>
 				<LI>
-					<B>Enable/Disable Face Feature Display</B> toggles a feature of the demo <i>video experiment</i>
+					<B>Enable/Disable Face Feature Display</B> toggles <i>Dlib based <b>Face Feature Recovery</b></i>
+				</LI>
+				<LI>
+					<B>Enable/Disable Face Image Display</B> toggles display of <i>Detected Faces</i> in the <b>Video Windo0w</b> lower left corner
+				</LI>
+				<LI>
+					<B>Enable/Disable Face Image Standardization</B> toggles attempting to make each <i>Face Image appear in Standard Passport Format</i>
 				</LI>
 				<LI>
 					<B>Light/Dark Theme</B> switching, just changes the gradient on the <B>Video Window's</B> left side

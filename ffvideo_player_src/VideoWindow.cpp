@@ -57,6 +57,7 @@ const long ID_ABOUT_MENU = wxNewId();
 const long ID_ENABLE_FACE_DETECTION_MENU = wxNewId();
 const long ID_ENABLE_FACE_FEATURE_DISPLAY_MENU = wxNewId();
 const long ID_ENABLE_FACE_IMAGES_DISPLAY_MENU = wxNewId();
+const long ID_ENABLE_FACE_IMAGE_STANDARDIZATION_MENU = wxNewId();
 
 const long ID_TOGGLE_THEME_MENU = wxNewId();
 const long ID_TILE_WINDOWS_MENU = wxNewId();
@@ -145,6 +146,8 @@ VideoWindow::VideoWindow(TheApp* app, int32_t id)
 	//
 	mp_faceImagesItem = mp_optionsMenu->Append(ID_ENABLE_FACE_IMAGES_DISPLAY_MENU, "Enable face images display");
 	//
+	mp_faceImagesStandarizedItem = mp_optionsMenu->Append(ID_ENABLE_FACE_IMAGE_STANDARDIZATION_MENU, "Enable face image standardization");
+	//
 	mp_optionsMenu->AppendSeparator();
 	//
 	mp_themeItem = mp_optionsMenu->Append(ID_TOGGLE_THEME_MENU, "Switch to \"Light Theme\"");
@@ -184,6 +187,7 @@ VideoWindow::VideoWindow(TheApp* app, int32_t id)
 	Connect(ID_ENABLE_FACE_DETECTION_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleFaceDetection);
 	Connect(ID_ENABLE_FACE_FEATURE_DISPLAY_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleFaceFeatures);
 	Connect(ID_ENABLE_FACE_IMAGES_DISPLAY_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleFaceImages);
+	Connect(ID_ENABLE_FACE_IMAGE_STANDARDIZATION_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleFaceImageStandarization);
 	
 
 	Connect(ID_TOGGLE_THEME_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleTheme);
@@ -1070,7 +1074,7 @@ void VideoWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 	wxAboutDialogInfo info;
 	info.SetName(_("FFVideo"));
-	info.SetVersion(_("0.91 Beta"));
+	info.SetVersion(_("0.92 Beta, July 28, 2021"));
 
 	wxString desc( "\nThis program is a series of things:\n\n" );
 	desc += "* a video player supporting IP video, USB Camera and Media File sourced video,\n";
@@ -1166,6 +1170,36 @@ void VideoWindow::OnToggleFaceImages(wxCommandEvent& WXUNUSED(event))
 			msg = "Enable face images display";
 		}
 		mp_faceImagesItem->SetItemLabel(msg);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////
+void VideoWindow::OnToggleFaceImageStandarization(wxCommandEvent& WXUNUSED(event))
+{
+	if (m_terminating)
+		return;
+
+	mp_renderCanvas->EnableFaceImageStandardization( !mp_renderCanvas->IsFaceImagesStandardized() );
+
+	if (mp_faceImagesStandarizedItem)
+	{
+		wxString msg;
+		if (mp_renderCanvas->IsFaceImagesEnabled())
+		{
+			msg = "Disable face image standardization";
+		}
+		else
+		{
+			msg = "Enable face image standardization";
+
+			// this requires face landmarks, so enable them if not already enabled: 
+			if (mp_renderCanvas->IsFaceLandmarksEnabled() == false)
+			{
+				wxCommandEvent dummy;
+				OnToggleFaceFeatures( dummy );
+			}
+		}
+		mp_faceImagesStandarizedItem->SetItemLabel(msg);
 	}
 }
 

@@ -451,4 +451,17 @@ bool RenderCanvas::EnableFaceImages( bool enable )
 	return true;
 }
 
+///////////////////////////////////////////////////////////////////
+// called by a wxWidgets menu handler in a VideoWindow
+bool RenderCanvas::EnableFaceImageStandardization( bool enable )
+{
+	if (!mp_app) 
+		return false;
+	if (!mp_app->m_we_are_launched || m_terminating)
+		return false;
+
+	m_faceDetectMgr.m_faceImagesStandardized = enable;
+	return true;
+}
+
 

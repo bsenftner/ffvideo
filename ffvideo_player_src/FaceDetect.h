@@ -22,10 +22,14 @@ public:
 
 	bool GetFaceBoxes( std::vector<dlib::rectangle>& detections );
 
-	void GetFaceImages( std::vector<dlib::rectangle>& detections, std::vector<FFVideo_Image>& face_images );
+	void GetFaceImages( std::vector<dlib::rectangle>& detections, 
+											std::vector<dlib::full_object_detection>& faceLandmarkSets,
+											std::vector<FFVideo_Image>& face_images,
+											bool full_head_flag = false );
 
 	bool GetFaceLandmarkSets( std::vector<dlib::rectangle>& detections, 
 	                          std::vector<dlib::full_object_detection>& faceLandmarkSets );
+
 	void GetLandmarks( dlib::full_object_detection& oneFace_landmarkSet,
 										 std::vector<FF_Vector2D>& jawline,
 										 std::vector<FF_Vector2D>& rtBrow,
@@ -42,10 +46,12 @@ private:
 	dlib::frontal_face_detector			m_detector;
 	dlib::shape_predictor						m_sp;
 
-	FFVideo_Image										m_im;
+	FFVideo_Image										m_im;							// video frame as delivered by ffmpeg
 	bool									          m_image_set;
-	dlib::array2d<dlib::rgb_pixel>  m_dlib_im;
-	dlib::array2d<dlib::rgb_pixel>  m_dlib_real_im;
+
+	float														m_detect_scale;		// normalized size factor between the two below
+	dlib::array2d<dlib::rgb_pixel>  m_dlib_im;				// is same w,h as m_im
+	dlib::array2d<dlib::rgb_pixel>  m_dlib_real_im;		// scaled smaller to speed up detections
 };
 
 
@@ -97,7 +103,7 @@ public:
 	  mp_frameProcessingThread(NULL), m_stop_frame_processing_loop(false), 
 		m_frame_processing_loop_ended(false), mp_frame_cb(NULL), mp_frame_object(NULL),
 		mp_faceDetector(NULL), m_faceDetectorInitialized(false), m_faceDetectorEnabled(false),
-		m_faceFeaturesEnabled(false), m_faceImagesEnabled(false) {};
+		m_faceFeaturesEnabled(false), m_faceImagesEnabled(false), m_faceImagesStandardized(false) {};
 
 	// 2nd required for for thread constructor
 	FaceDetectionThreadMgr(const FFVideo_FrameExporter& obj) {}
@@ -193,6 +199,7 @@ public:
 	bool																			m_faceDetectorEnabled;
 	bool																			m_faceFeaturesEnabled;
 	bool																			m_faceImagesEnabled;
+	bool																			m_faceImagesStandardized;
 
 	mutable std::shared_mutex									m_queue_lock;
 	std::queue<FaceDetectionFrame>						m_frameQue;

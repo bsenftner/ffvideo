@@ -159,9 +159,11 @@ public:
 	bool IsFaceDetectionEnabled( void ) { return m_faceDetectMgr.m_faceDetectorEnabled; }
 	bool IsFaceLandmarksEnabled( void ) { return m_faceDetectMgr.m_faceFeaturesEnabled; }
 	bool IsFaceImagesEnabled( void ) { return m_faceDetectMgr.m_faceImagesEnabled; }
+	bool IsFaceImagesStandardized( void ) { return m_faceDetectMgr.m_faceImagesStandardized; }
 	bool EnableFaceDetection( bool enable );
 	bool EnableFaceLandmarks( bool enable );
 	bool EnableFaceImages( bool enable );
+	bool EnableFaceImageStandardization( bool enable );
 
 	// framebuffer rendering:
 
