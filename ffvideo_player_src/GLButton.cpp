@@ -85,6 +85,10 @@ void GLButton::CalcState(void)
 		float mouseX = (float)mp_canvas->m_mpos.x;
 		float mouseY = (float)mp_canvas->m_winSize.y - (float)mp_canvas->m_mpos.y;
 
+		if (mouseX < mp_canvas->m_trans.x)
+		{
+		}
+
 		if (mouseX > m_pos.x && mouseX < m_pos.x + m_texture.m_width)
 		{
 			if (mouseY > m_pos.y && mouseY < m_pos.y + m_texture.m_height)
@@ -105,13 +109,14 @@ void GLButton::Render(void)
 	//	return;
 
 	// check for mouse being off screen:
-	float mouseX = (float)mp_canvas->m_mpos.x;
-	float mouseY = (float)mp_canvas->m_winSize.y - (float)mp_canvas->m_mpos.y;
+	float mouseNX = (float)mp_canvas->m_npos.x;
+	float mouseX  = (float)mp_canvas->m_mpos.x;
+	float mouseY  = (float)mp_canvas->m_winSize.y - (float)mp_canvas->m_mpos.y;
 	//
 	float win_width = (float)mp_canvas->m_winSize.x;
 	float win_height = (float)mp_canvas->m_winSize.y;
 	//
-	if (mouseX < 0.0f || mouseX >= win_width ||
+	if (mouseNX < 0.0f || mouseX >= win_width ||
 		  mouseY < 0.0f || mouseY >= win_height)
 	{
 		return;

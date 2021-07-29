@@ -209,7 +209,7 @@ public:
 
 	wxSize										m_winSize;						// window size 
 	float											m_zoom;								// scale factor for video image to fit the window
-	FF_Vector2D								m_trans;							// translation to center frame
+	FF_Vector2D								m_trans;							// translation to position frame
 
 	FF_Vector2D								m_npos;								// normalized position of mouse inside video frame
 	FF_Coord2D								m_mpos;								// position of mouse in window
