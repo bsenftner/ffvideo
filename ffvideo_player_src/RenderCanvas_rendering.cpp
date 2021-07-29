@@ -243,26 +243,24 @@ void RenderCanvas::DrawFaces(void)
 
 		if (IsFaceImagesEnabled())
 		{
-			// showing only the tallest one for the moment: 
-			int32_t tallest = -1;
+			float offset(0.0f);
 			for (size_t i = 0; i < m_facesImages.size(); i++)
 			{
-				if (i == 0)
-				   tallest = 0;
-				else if (m_facesImages[i].m_height > m_facesImages[tallest].m_height)
-				   tallest = i;
-			}
-			if (tallest > -1)
-			{
-				unsigned char* pix = m_facesImages[tallest].mp_pixels;
-				int32_t				 w   = m_facesImages[tallest].m_width;
-				int32_t				 h   = m_facesImages[tallest].m_height;
+				if (offset > m_winSize.x)
+				   break;
 
-				glRasterPos2f(5.0f, 5.0f);
-				glPixelZoom(m_zoom, m_zoom);
+				unsigned char* pix = m_facesImages[i].mp_pixels;
+				int32_t				 w   = m_facesImages[i].m_width;
+				int32_t				 h   = m_facesImages[i].m_height;
+
+				glRasterPos2f(5.0f + offset, 5.0f);
+				// glPixelZoom(m_zoom, m_zoom);
 				// glPixelZoom(1.0f, 1.0f);
+				glPixelZoom(0.5f, 0.5f);
 
 				glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)pix);
+
+				offset += (float)w * 0.5f + 5.0f;
 			}
 		}
 

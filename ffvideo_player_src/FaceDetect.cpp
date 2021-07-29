@@ -89,7 +89,7 @@ void FaceDetector::GetFaceImages( std::vector<rectangle>& detections,
 		if (full_head_flag)
 		{
 			// gives us the details for the entire vector of faceLandMarks:
-			std::vector<dlib::chip_details> dets = get_face_chip_details(faceLandmarkSets, 200, 0.7 );
+			std::vector<dlib::chip_details> dets = get_face_chip_details(faceLandmarkSets, 300, 0.8 );
 
 			// chip_details 
 
