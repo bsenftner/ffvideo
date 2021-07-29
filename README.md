@@ -74,10 +74,11 @@ Added a menu option for display of detected faces. Beta, only displays first det
 <img src="https://user-images.githubusercontent.com/1216815/126713258-f1d23ba1-3fce-4038-8cde-e1567e365362.png" width=400>
 
 New July 28, 2021:
-Modified the display of detected faces to optionally <i>standardize the collected face images</i> to be presented as close as possible to <b>Standard Passport Format</b>, with the eyes rotated to be level and re-evaluated to a 200x200 pixel image, regardless of source dimensions. 
+Modified the display of detected faces to optionally <i>standardize the collected face images</i> to be presented as close as possible to <b>Standard Passport Format</b>, with the eyes rotated to be level and re-evaluated to a 300x300 pixel image, regardless of source dimensions. 
 
-![StandardizedFaceImages](https://user-images.githubusercontent.com/1216815/127404166-f7139c59-a60c-4078-9ce5-cbe8a576f8aa.jpg)
-
+demonstrating tilted head registration | demonstrating multiple heads
+-------------------------------------- | ----------------------------
+<img src="https://user-images.githubusercontent.com/1216815/127404166-f7139c59-a60c-4078-9ce5-cbe8a576f8aa.jpg"> | <img src="https://user-images.githubusercontent.com/1216815/127430640-42680645-683b-4cd0-9cea-cda0a0059b26.png">
 
 Known issues:
 
