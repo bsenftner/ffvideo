@@ -1,5 +1,5 @@
 # FFVideo
-##### <i>Last update July 28, 2021</i></br>
+##### <i>Last update July 29, 2021</i></br>
 An example FFmpeg lib, and wxWidgets Player application with video filters and face detection, it is a no-audio video player intended for video experiments and developers 
 learning how to code media applications. 
 
@@ -79,6 +79,13 @@ Modified the display of detected faces to optionally <i>standardize the collecte
 demonstrating tilted head registration | demonstrating multiple heads
 -------------------------------------- | ----------------------------
 <img src="https://user-images.githubusercontent.com/1216815/127404166-f7139c59-a60c-4078-9ce5-cbe8a576f8aa.jpg"> | <img src="https://user-images.githubusercontent.com/1216815/127430640-42680645-683b-4cd0-9cea-cda0a0059b26.png">
+
+New July 29, 2021:</br>
+
+Switched to using the <a href="http://ermig1979.github.io/Simd/index.html">SIMD Library</a> for RGBA to RGB and to grayscale conversions. Multiple face detection code changes, such as adding a <i>precision</i> control and switching to doing face detections in grayscale.</br>
+
+<img src="https://user-images.githubusercontent.com/1216815/127581406-9aadb7a9-f2ff-40df-9363-239497f2df72.png" width=40% >
+
 
 Known issues:
 
