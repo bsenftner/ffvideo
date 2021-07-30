@@ -20,6 +20,7 @@
 
 #include <wx/aboutdlg.h>
 #include "wx/display.h"
+#include <wx/numdlg.h> 
 
 #include "ffvideo_player_app.h"
 
@@ -55,6 +56,7 @@ const long ID_CLOSEALL_MENU = wxNewId();
 const long ID_ABOUT_MENU = wxNewId();
 
 const long ID_ENABLE_FACE_DETECTION_MENU = wxNewId();
+const long ID_SET_FACE_DETECTION_PRECISION = wxNewId();
 const long ID_ENABLE_FACE_FEATURE_DISPLAY_MENU = wxNewId();
 const long ID_ENABLE_FACE_IMAGES_DISPLAY_MENU = wxNewId();
 const long ID_ENABLE_FACE_IMAGE_STANDARDIZATION_MENU = wxNewId();
@@ -142,6 +144,8 @@ VideoWindow::VideoWindow(TheApp* app, int32_t id)
 	//
 	mp_faceDetectItem = mp_optionsMenu->Append(ID_ENABLE_FACE_DETECTION_MENU, "Enable face detection");
 	//
+	mp_optionsMenu->Append(ID_SET_FACE_DETECTION_PRECISION, "Set face detection precision...");
+	//
 	mp_faceFeaturesItem = mp_optionsMenu->Append(ID_ENABLE_FACE_FEATURE_DISPLAY_MENU, "Enable face feature display");
 	//
 	mp_faceImagesItem = mp_optionsMenu->Append(ID_ENABLE_FACE_IMAGES_DISPLAY_MENU, "Enable face images display");
@@ -185,6 +189,7 @@ VideoWindow::VideoWindow(TheApp* app, int32_t id)
 
 
 	Connect(ID_ENABLE_FACE_DETECTION_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleFaceDetection);
+	Connect(ID_SET_FACE_DETECTION_PRECISION, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnSetFaceDetectionPrecision);
 	Connect(ID_ENABLE_FACE_FEATURE_DISPLAY_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleFaceFeatures);
 	Connect(ID_ENABLE_FACE_IMAGES_DISPLAY_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleFaceImages);
 	Connect(ID_ENABLE_FACE_IMAGE_STANDARDIZATION_MENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoWindow::OnToggleFaceImageStandarization);
@@ -1074,7 +1079,7 @@ void VideoWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 	wxAboutDialogInfo info;
 	info.SetName(_("FFVideo"));
-	info.SetVersion(_("0.92 Beta, July 28, 2021"));
+	info.SetVersion(_("0.93 Beta, July 28, 2021"));
 
 	wxString desc( "\nThis program is a series of things:\n\n" );
 	desc += "* a video player supporting IP video, USB Camera and Media File sourced video,\n";
@@ -1125,6 +1130,31 @@ void VideoWindow::OnToggleFaceDetection(wxCommandEvent& WXUNUSED(event))
 		}
 		mp_faceDetectItem->SetItemLabel(msg);
 	}
+}
+
+////////////////////////////////////////////////////////////////////////
+void VideoWindow::OnSetFaceDetectionPrecision(wxCommandEvent& WXUNUSED(event))
+{
+	if (m_terminating)
+		return;
+
+	wxString msg("Values close to 0 process faster, but distant faces are not detected.\nValues close to 200 detect distant faces, but process much slower."); 
+	msg += "\nValues close to 25 correspond to a minimum head height of 1/2 the frame height,\n";
+	msg += "\nValues close to 200 correspond to a minimum head height of 1/16th the frame height.";
+
+	wxString prompt("Please enter a value between 20 and 200."); 
+	wxString caption("Face Detection Precision"); 
+	//
+	wxPoint pos(  mp_renderCanvas->m_mpos.x,  mp_renderCanvas->m_mpos.y );
+
+	long ret = wxGetNumberFromUser( msg, prompt, caption, (long)(mp_renderCanvas->m_faceDetectMgr.GetFaceDetectionScale() * 100.0f), 20, 200, this, pos );
+	
+	if (ret < 0)
+	   return;
+
+	float new_detection_scale = (float)ret / 100.0f;
+
+	mp_renderCanvas->m_faceDetectMgr.SetFaceDetectionScale(new_detection_scale);
 }
 
 ////////////////////////////////////////////////////////////////////////

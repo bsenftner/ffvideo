@@ -123,6 +123,7 @@ public:
 	void UpdateScrollbar(void);
 
 	void OnToggleFaceDetection(wxCommandEvent& event);
+	void OnSetFaceDetectionPrecision(wxCommandEvent& event);
 	void OnToggleFaceFeatures(wxCommandEvent& event);
 	void OnToggleFaceImages(wxCommandEvent& event);
 	void OnToggleFaceImageStandarization(wxCommandEvent& event);

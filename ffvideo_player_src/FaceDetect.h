@@ -9,14 +9,13 @@
 #include <dlib/image_processing/render_face_detections.h>
 #include <dlib/image_processing.h>
 
-
 class FaceDetector
 {
 public:
 	FaceDetector(TheApp* app);
 	~FaceDetector();
 
-	void SetImage( FFVideo_Image& im );
+	void SetImage( FFVideo_Image& im, float detection_scale );
 
 	void GetDlibImageSize( FF_Vector2D& size ) { size.Set( m_dlib_real_im.nc(), m_dlib_real_im.nr() ); }
 
@@ -50,8 +49,9 @@ private:
 	bool									          m_image_set;
 
 	float														m_detect_scale;		// normalized size factor between the two below
-	dlib::array2d<dlib::rgb_pixel>  m_dlib_im;				// is same w,h as m_im
-	dlib::array2d<dlib::rgb_pixel>  m_dlib_real_im;		// scaled smaller to speed up detections
+
+	dlib::array2d<uint8_t>					m_dlib_im;				// is same w,h as m_im but greyscale
+	dlib::array2d<uint8_t>          m_dlib_real_im;		// potentially scaled to speed up detections or enhance precision
 };
 
 
@@ -102,12 +102,14 @@ public:
 	FaceDetectionThreadMgr(TheApp* app) : mp_app(app), 
 	  mp_frameProcessingThread(NULL), m_stop_frame_processing_loop(false), 
 		m_frame_processing_loop_ended(false), mp_frame_cb(NULL), mp_frame_object(NULL),
-		mp_faceDetector(NULL), m_faceDetectorInitialized(false), m_faceDetectorEnabled(false),
+		mp_faceDetector(NULL), m_face_detection_scale(0.25f), 
+		m_faceDetectorInitialized(false), m_faceDetectorEnabled(false),
 		m_faceFeaturesEnabled(false), m_faceImagesEnabled(false), m_faceImagesStandardized(false) {};
 
 	// 2nd required for for thread constructor
 	FaceDetectionThreadMgr(const FFVideo_FrameExporter& obj) {}
 
+	//////////////////////////////////////////////////////////////////////////////////////
 	// class sub-thread function that spins waiting for frames to find faces within:
 	void FrameProcessingLoop(void);
 	//
@@ -117,6 +119,7 @@ public:
 	std::atomic<bool>		m_stop_frame_processing_loop;
 	std::atomic<bool>		m_frame_processing_loop_ended;
 
+	//////////////////////////////////////////////////////////////////////////////////////
 	~FaceDetectionThreadMgr()
 	{
 		StopFaceDetectionThread();
@@ -129,6 +132,7 @@ public:
 		}
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////
 	bool IsRunning(void)
 	{
 		if (!mp_frameProcessingThread)
@@ -140,6 +144,7 @@ public:
 		return ret;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////
 	void StartFaceDetectionThread(void)
 	{
 		if (!IsRunning())
@@ -148,6 +153,7 @@ public:
 		}
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////
 	void StopFaceDetectionThread(void)
 	{
 		// only if the ExportProcessLoop() is running:
@@ -186,6 +192,18 @@ public:
 		return work_to_do;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////
+	void SetFaceDetectionScale(float detection_scale) {	
+		m_face_detection_scale = detection_scale;
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	float GetFaceDetectionScale(void) {	
+		return m_face_detection_scale;
+	}
+
+
 	TheApp*																		mp_app;
 
 	// the "frame callback", called with every frame: 
@@ -195,6 +213,7 @@ public:
 	void*																			mp_frame_object;
 
 	FaceDetector*															mp_faceDetector;
+	float																			m_face_detection_scale;
 	bool																			m_faceDetectorInitialized;
 	bool																			m_faceDetectorEnabled;
 	bool																			m_faceFeaturesEnabled;

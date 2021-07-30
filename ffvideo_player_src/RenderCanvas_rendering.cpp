@@ -253,14 +253,14 @@ void RenderCanvas::DrawFaces(void)
 				int32_t				 w   = m_facesImages[i].m_width;
 				int32_t				 h   = m_facesImages[i].m_height;
 
+				float          zoom = 1.0f; // m_zoom // 0.5f 
+
 				glRasterPos2f(5.0f + offset, 5.0f);
-				// glPixelZoom(m_zoom, m_zoom);
-				// glPixelZoom(1.0f, 1.0f);
-				glPixelZoom(0.5f, 0.5f);
+				glPixelZoom(zoom, zoom);
 
 				glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)pix);
 
-				offset += (float)w * 0.5f + 5.0f;
+				offset += (float)w * zoom + 5.0f;
 			}
 		}
 
@@ -399,28 +399,8 @@ void RenderCanvas::OnPaint(wxPaintEvent& WXUNUSED(event))
 
 	if (m_detections.size() > 0)
 	{
-		if (IsFaceImagesEnabled())
-		{
-			// showing only the tallest one for the moment: 
-			int32_t tallest = -1;
-			for (size_t i = 0; i < m_facesImages.size(); i++)
-			{
-				if (i == 0)
-					tallest = 0;
-				else if (m_facesImages[i].m_height > m_facesImages[tallest].m_height)
-					tallest = i;
-			}
-			if (tallest > -1)
-			{
-				int32_t left   = (int32_t)m_detections[tallest].left();
-				int32_t top    = (int32_t)m_detections[tallest].top();
-				int32_t right  = (int32_t)m_detections[tallest].right();
-				int32_t bottom = (int32_t)m_detections[tallest].bottom();
-				
-				scratch = mp_videoWindow->mp_app->FormatStr("left %d, bottom %d  right %d, top %d", left, bottom, right, top );
-				m_text.push_back(scratch);
-			}
-		}
+		scratch = mp_videoWindow->mp_app->FormatStr("Face detection precision %d", (int32_t)(m_faceDetectMgr.GetFaceDetectionScale() * 100.0f + 0.5f) );
+		m_text.push_back(scratch);
 	}
 
 

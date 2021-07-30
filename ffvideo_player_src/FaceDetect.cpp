@@ -7,6 +7,12 @@
 #include "ffvideo_player_app.h"
 
 
+// not actually using OpenCV yet...
+// #include <opencv2/core/core.hpp>
+// #define SIMD_OPENCV_ENABLE
+#include "Simd/SimdLib.hpp"
+
+
 using namespace dlib;
 
 ////////////////////////////////////////////////////////////////////////
@@ -19,7 +25,7 @@ FaceDetector::FaceDetector( TheApp* p_app )
 	// deserialize("c:\\\\dev\\shape_predictor_68_face_landmarks.dat") >> m_sp;
 	deserialize( model_path.c_str() ) >> m_sp;
 
-	m_detect_scale = 0.4f;
+	m_detect_scale = 0.25f;
 
 	m_image_set = false;
 }
@@ -31,13 +37,18 @@ FaceDetector::~FaceDetector()
 }
 
 ////////////////////////////////////////////////////////////////////////
-void FaceDetector::SetImage( FFVideo_Image& im )
+void FaceDetector::SetImage( FFVideo_Image& im, float detection_scale )
 {
   // check if our class instance m_dlib_im is not the same w,h as the passed image:
 	if (m_dlib_im.nc() != im.m_width || m_dlib_im.nr() != im.m_height)
 	{
 	  // reallocate m_dlib_im to same size as passed image:
 		m_dlib_im.set_size( im.m_height, im.m_width );
+	}
+
+	if (m_detect_scale != detection_scale)
+	{
+		m_detect_scale = detection_scale;
 
 		// set size of reduced scale version used for faster processing:
 		m_dlib_real_im.set_size( ((int32_t)(float)im.m_height * m_detect_scale + 0.5f), ((int32_t)(float)im.m_width * m_detect_scale + 0.5f) );
@@ -46,19 +57,38 @@ void FaceDetector::SetImage( FFVideo_Image& im )
 	// remember in this format, incase we're asked for the face rects later:
 	m_im.Clone( im );
 
-	// copy the FFvideo_Image format image to m_dlib_im, a dlib format image:
-	for (uint32_t y = 0; y < im.m_height - 1; y++)
+	FFVideo_Image im_flip( im );
+	im_flip.MirrorVertical();
+
+	int32_t rgba_stride = sizeof(uint8_t) * 4 * im_flip.m_width;
+	int32_t rgb_stride  = sizeof(uint8_t) * 3 * im_flip.m_width;
+
+	int32_t grey_stride  = sizeof(uint8_t) * im_flip.m_width;
+
+	// copy the RGBA FFvideo_Image format image to m_dlib_im, a greyscale format image:
+	SimdBgraToGray( im_flip.Pixel(0, 0), im_flip.m_width, im_flip.m_height, rgba_stride, (uint8_t*)&m_dlib_im[0][0], grey_stride );
+
+	if (m_detect_scale != 1.0f)
 	{
-		uint32_t iy = im.m_height - y - 1;
+		dlib::array2d<unsigned char> img_flip;
+		dlib::flip_image_up_down(m_dlib_im, img_flip);
 
-		for (uint32_t x = 0; x < im.m_width - 1; x++)
-			memcpy((void*)(&m_dlib_im[iy][x]), im.Pixel(x, y), sizeof(uint8_t) * 3); 
-	} 
-
-	// because face detection and face feature recovery take time,
-	// we're going to actually work with a significantly smaller
-	// image for our detections with dlib:
-	dlib::resize_image( m_dlib_im, m_dlib_real_im );
+		// because face detection and face feature recovery take time,
+		// we're going to actually work with an end-user set scaling of 
+		// the image for our detections with dlib:
+		//
+		dlib::interpolate_nearest_neighbor interp_type; // slightly faster? 
+		//
+		dlib::resize_image( m_dlib_im, m_dlib_real_im, interp_type );
+		//
+		// boo! not faster:
+		// SimdResizeBilinear( (uint8_t*)&m_dlib_im[0][0], im_flip.m_width, im_flip.m_height, rgb_stride, 
+		// 										 (uint8_t*)&m_dlib_real_im[0][0], m_dlib_real_im.nc(), m_dlib_real_im.nr(), rgb_stride, 3 );
+	}
+	else
+	{
+		dlib::flip_image_up_down(m_dlib_im, m_dlib_real_im);
+	}
 
 	m_image_set = true;
 }
@@ -89,12 +119,10 @@ void FaceDetector::GetFaceImages( std::vector<rectangle>& detections,
 		if (full_head_flag)
 		{
 			// gives us the details for the entire vector of faceLandMarks:
-			std::vector<dlib::chip_details> dets = get_face_chip_details(faceLandmarkSets, 300, 0.8 );
-
-			// chip_details 
+			std::vector<dlib::chip_details> dets = get_face_chip_details(faceLandmarkSets, 128, 0.8 );
 
 			// storage for an array of face images in dlib format:
-			dlib::array<array2d<rgb_pixel> > face_chips;
+			dlib::array<array2d<unsigned char>> face_chips;
 
 			// generates all the sub-images in dlib image format:
 			extract_image_chips(m_dlib_real_im, dets, face_chips);
@@ -102,23 +130,27 @@ void FaceDetector::GetFaceImages( std::vector<rectangle>& detections,
 			// convert to FFVideo_Image format:
 			for (size_t i = 0; i < face_chips.size(); i++)
 			{
-				array2d<rgb_pixel>& face_chip = face_chips[i];
+			  // get reference to face sub-image:
+				array2d<unsigned char>& face_chip = face_chips[i];
 
+				// we want it flipped in our format:
+				dlib::array2d<unsigned char> chip_flip;
+				dlib::flip_image_up_down(face_chip, chip_flip);
+
+				// create new FFVideo_Image in vector and get reference:
 				face_images.push_back( FFVideo_Image() );
 				FFVideo_Image& im = face_images.back();
 
-				im.Reallocate( face_chip.nr(), face_chip.nc() );
+				// set dimensions:
+				im.Reallocate( chip_flip.nr(), chip_flip.nc() );
 				
-				for (uint32_t y = 0; y < im.m_height; y++)
-				{
-					uint32_t iy = im.m_height - y - 1;
-
-					for (uint32_t x = 0; x < im.m_width; x++)
-					{
-						memcpy((void*)im.Pixel(x, y), &face_chip[iy][x], sizeof(uint8_t) * 3); // copy 3 bytes
-					}
-				} 
+				// calc bytes per row and copy the face sub-images to FFVideo_Images:
+				int32_t grey_stride  = sizeof(uint8_t) * im.m_width;
+				int32_t rgba_stride  = sizeof(uint8_t) * 4 * im.m_width;
+				//
+				SimdGrayToBgra( &chip_flip[0][0], im.m_width, im.m_height, grey_stride, im.Pixel(0,0), rgba_stride, 255 );
 			}
+
 		}
 		else // this version clips the detected face rects as new images directly from the video frame:
 		{
@@ -292,7 +324,7 @@ void FaceDetectionThreadMgr::FrameProcessingLoop(void)
 				// do the work of this thread:
 				if (m_faceDetectorEnabled)
 				{
-					mp_faceDetector->SetImage( fdf.m_im );
+					mp_faceDetector->SetImage( fdf.m_im, m_face_detection_scale );
 
 					// this work is time consuming, so check if we're supposed to quit: 
 					if (m_stop_frame_processing_loop)
@@ -313,7 +345,7 @@ void FaceDetectionThreadMgr::FrameProcessingLoop(void)
 					if (m_stop_frame_processing_loop)
 						break;
 
-					if (m_faceImagesEnabled)
+					if (m_faceImagesEnabled && m_faceFeaturesEnabled)
 					{
 						mp_faceDetector->GetFaceImages( fdf.m_detections, fdf.m_facesLandmarkSets, fdf.m_facesImages, m_faceImagesStandardized );
 					}

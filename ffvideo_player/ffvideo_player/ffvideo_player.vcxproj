@@ -257,6 +257,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\opencv-4.5.3\opencv\build\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>C:\opencv-4.5.3\opencv\build\x64\vc15\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -271,6 +273,11 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgInstalledDir>$(vcpkgRoot)</VcpkgInstalledDir>
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+    <VcpkgTriplet>x64-windows-static-142</VcpkgTriplet>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <VcpkgInstalledDir>$(vcpkgRoot)</VcpkgInstalledDir>
     <VcpkgUseStatic>true</VcpkgUseStatic>
     <VcpkgTriplet>x64-windows-static-142</VcpkgTriplet>
@@ -445,7 +452,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WXMSW_;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(BoostRoot);$(vcpkgRoot)\installed\x64-windows-static-142\include;$(FFmpegDebugRoot)\include;$(FFvideoRoot)\ffvideolib_src;$(WXWIN)\include;$(WXWIN)\include\msvc;$(GLEWRoot)\include;$(kvsRoot)\kvs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BoostRoot);$(vcpkgRoot)\installed\x64-windows-static-142\include;$(FFmpegDebugRoot)\include;$(FFvideoRoot)\ffvideolib_src;$(WXWIN)\include;$(WXWIN)\include\msvc;$(GLEWRoot)\include;$(kvsRoot)\kvs;$(SimdLibRoot)\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BrowseInformation>true</BrowseInformation>
@@ -455,8 +462,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(BoostRoot)\stage\lib;$(vcpkgRoot)\installed\x64-windows-static-142\debug\lib;$(GLEWRoot)\lib\Release\x64;$(WXWIN)\lib\vc_x64_lib;$(FFmpegDebugRoot)\lib;$(FFvideoRoot)\PrebuiltLibs;$(FFvideoRoot)\ffvideolib\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openblas.lib;lapack.lib;dlib19.21.0_debug_64bit_msvc1929.lib;wxmsw31ud_gl.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxmsw31ud_webview.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;opengl32.lib;glu32.lib;glew32.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;ffvideolib.lib;libavcodec.a;libavdevice.a;libavfilter.a;libavformat.a;libavutil.a;libswresample.a;libswscale.a;libpostproc.a;libx264.lib;bcrypt.lib;Vfw32.lib;Secur32.lib;Ws2_32.lib;turbojpegd.lib;zlib.lib;png.lib;tiff.lib;sqllite.lib;kvsd.lib;Mfplat.lib;Mfuuid.lib;LIBCMTD.lib;MSVCRTD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(BoostRoot)\stage\lib;$(vcpkgRoot)\installed\x64-windows-static-142\debug\lib;$(GLEWRoot)\lib\Release\x64;$(WXWIN)\lib\vc_x64_lib;$(FFmpegDebugRoot)\lib;$(FFvideoRoot)\PrebuiltLibs;$(FFvideoRoot)\ffvideolib\x64\Debug;$(SimdLibRoot)\bin\v142\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openblas.lib;lapack.lib;dlib19.21.0_debug_64bit_msvc1929.lib;wxmsw31ud_gl.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxmsw31ud_webview.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;opengl32.lib;glu32.lib;glew32.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;ffvideolib.lib;libavcodec.a;libavdevice.a;libavfilter.a;libavformat.a;libavutil.a;libswresample.a;libswscale.a;libpostproc.a;libx264.lib;bcrypt.lib;Vfw32.lib;Secur32.lib;Ws2_32.lib;turbojpegd.lib;zlib.lib;png.lib;tiff.lib;sqllite.lib;kvsd.lib;Mfplat.lib;Mfuuid.lib;LIBCMTD.lib;MSVCRTD.lib;Base.lib;Simd.lib;Neon.lib;Avx1.lib;Avx2.lib;Avx512bw.lib;Avx512f.lib;Avx512vnni.lib;Sse2.lib;Sse3.lib;Sse41.lib;Sse42.lib;Ssse3.lib;Vmx.lib;Vsx.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
@@ -473,7 +480,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(BoostRoot);$(vcpkgRoot)\installed\x64-windows-static-142\include;$(FFmpegRoot)\include;$(FFvideoRoot)\ffvideolib_src;$(WXWIN)\include;$(WXWIN)\include\msvc;$(GLEWRoot)\include;$(kvsRoot)\kvs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BoostRoot);$(vcpkgRoot)\installed\x64-windows-static-142\include;$(FFmpegRoot)\include;$(FFvideoRoot)\ffvideolib_src;$(WXWIN)\include;$(WXWIN)\include\msvc;$(GLEWRoot)\include;$(kvsRoot)\kvs;$(SimdLibRoot)\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -484,8 +491,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(BoostRoot)\stage\lib;$(vcpkgRoot)\installed\x64-windows-static-142\lib;$(GLEWRoot)\lib\Release\x64;$(WXWIN)\lib\vc_x64_lib;$(FFmpegRoot)\lib;$(FFvideoRoot)\PrebuiltLibs;$(FFvideoRoot)\ffvideolib\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openblas.lib;lapack.lib;dlib19.21.0_release_64bit_msvc1929.lib;wxmsw31u_gl.lib;wxmsw31u_core.lib;wxbase31u.lib;wxmsw31u_webview.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;opengl32.lib;glu32.lib;glew32.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;ffvideolib.lib;libavcodec.a;libavdevice.a;libavfilter.a;libavformat.a;libavutil.a;libswresample.a;libswscale.a;libpostproc.a;libx264.lib;bcrypt.lib;Vfw32.lib;Secur32.lib;Ws2_32.lib;turbojpeg.lib;jpgcpp.lib;zlib.lib;png.lib;tiff.lib;sqllite.lib;kvs.lib;Mfplat.lib;Mfuuid.lib;LIBCMT.lib;MSVCRT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(BoostRoot)\stage\lib;$(vcpkgRoot)\installed\x64-windows-static-142\lib;$(GLEWRoot)\lib\Release\x64;$(WXWIN)\lib\vc_x64_lib;$(FFmpegRoot)\lib;$(FFvideoRoot)\PrebuiltLibs;$(FFvideoRoot)\ffvideolib\x64\Release;$(SimdLibRoot)\bin\v142\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openblas.lib;lapack.lib;dlib19.21.0_release_64bit_msvc1929.lib;wxmsw31u_gl.lib;wxmsw31u_core.lib;wxbase31u.lib;wxmsw31u_webview.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;opengl32.lib;glu32.lib;glew32.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;ffvideolib.lib;libavcodec.a;libavdevice.a;libavfilter.a;libavformat.a;libavutil.a;libswresample.a;libswscale.a;libpostproc.a;libx264.lib;bcrypt.lib;Vfw32.lib;Secur32.lib;Ws2_32.lib;turbojpeg.lib;jpgcpp.lib;zlib.lib;png.lib;tiff.lib;sqllite.lib;kvs.lib;Mfplat.lib;Mfuuid.lib;LIBCMT.lib;MSVCRT.lib;Base.lib;Simd.lib;Neon.lib;Avx1.lib;Avx2.lib;Avx512bw.lib;Avx512f.lib;Avx512vnni.lib;Sse2.lib;Sse3.lib;Sse41.lib;Sse42.lib;Ssse3.lib;Vmx.lib;Vsx.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
