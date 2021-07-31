@@ -1,5 +1,5 @@
 # FFVideo
-##### <i>Last update July 29, 2021</i></br>
+##### <i>Last update July 31, 2021</i></br>
 An example FFmpeg lib, and wxWidgets Player application with video filters and face detection, it is a no-audio video player intended for video experiments and developers 
 learning how to code media applications. 
 
@@ -85,6 +85,16 @@ New July 29, 2021:</br>
 Switched to using the <a href="http://ermig1979.github.io/Simd/index.html">SIMD Library</a> for RGBA to RGB and to grayscale conversions. Multiple face detection code changes, such as adding a <i>precision</i> control and switching to doing face detections in grayscale.</br>
 
 <img src="https://user-images.githubusercontent.com/1216815/127581406-9aadb7a9-f2ff-40df-9363-239497f2df72.png" width=40% >
+
+New July 31, 2021:</br>
+
+Experimenting with the 81 point face landmark model from https://github.com/codeniko/shape_predictor_81_face_landmarks </br>
+In RenderCanvas.cpp, the bottom of the RenderCanvas() constructor is a call to</br> 
+m_faceDetectMgr.SetFaceModel( FACE_MODEL::eightyone ); </br>
+just change that to m_faceDetectMgr.SetFaceModel( FACE_MODEL::sixtyeight ); to revert back to the original face landmarks. </br>
+Note there is some glue logic when getting the "face chips" for the 81 point face model to work.
+
+![detectedFaceDisplay05](https://user-images.githubusercontent.com/1216815/127749077-e9e5939e-1a73-422b-9910-76bddd899cf9.png)
 
 
 Known issues:
