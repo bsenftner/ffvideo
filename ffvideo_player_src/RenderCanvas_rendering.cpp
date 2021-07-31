@@ -197,7 +197,6 @@ void RenderCanvas::DrawFaces(void)
 					m_faceDetectMgr.mp_faceDetector->GetLandmarks( oneFace_landmarkSet, jawline, rtBrow, ltBrow, 
 																												 noseBridge, noseBottom, rtEye, ltEye, outsideLips, insideLips,
 																												 forehead ); // forehead only has points if using 81 landmark face model
-
 					glColor3ub( 0, 255, 0 );
 					glLineWidth( 2.0f );
 					//
@@ -263,14 +262,21 @@ void RenderCanvas::DrawFaces(void)
 				int32_t				 w   = m_facesImages[i].m_width;
 				int32_t				 h   = m_facesImages[i].m_height;
 
-				float          zoom = 1.0f; // m_zoom // 0.5f 
+				if (h < m_frame.m_height)
+				{
+					float          zoom = 1.0f; // m_zoom // 0.5f 
+					if (!IsFaceImagesStandardized())
+					{
+						zoom = 128.0 / (float)h;
+					}
 
-				glRasterPos2f(5.0f + offset, 5.0f);
-				glPixelZoom(zoom, zoom);
+					glRasterPos2f(5.0f + offset, 5.0f);
+					glPixelZoom(zoom, zoom);
 
-				glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)pix);
+					glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)pix);
 
-				offset += (float)w * zoom + 5.0f;
+					offset += (float)w * zoom + 5.0f;
+				}
 			}
 		}
 
