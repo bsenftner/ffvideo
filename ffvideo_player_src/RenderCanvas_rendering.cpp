@@ -29,32 +29,34 @@
 /////////////////////////////////////////////////////////////////////////////
 void RenderCanvas::CalcVideoPlacement(void)
 {
-	// if window is taller than wide:
-	if (m_winSize.x < m_winSize.y)
-	{
-		// fit image width to fill the window
+	wxSize contentSize = m_winSize;
 
-		// set zoom to windowWidth / imageWidth
-		m_zoom = (float)m_winSize.x / (float)m_frame.m_width;
+	// if content area is taller than wide:
+	if (contentSize.x < contentSize.y)
+	{
+		// fit image width to fill the content area
+
+		// set zoom to contentSize / imageWidth
+		m_zoom = (float)contentSize.x / (float)m_frame.m_width;
 		m_trans.x = 0.0f;
 
-		// y placement is window height less half scaled image height
+		// y placement is content height less half scaled image height
 		// basically centering the image vertically
-		m_trans.y = ((float)m_winSize.y - (m_zoom * (float)m_frame.m_height)) / 2.0f;
+		m_trans.y = ((float)contentSize.y - (m_zoom * (float)m_frame.m_height)) / 2.0f;
 	}
 	else // window is wider than tall
 	{
 		// fit image height to fill the window
 
 		// set zoom to window height / image height
-		m_zoom = (float)m_winSize.y / (float)m_frame.m_height;
+		m_zoom = (float)contentSize.y / (float)m_frame.m_height;
 		m_trans.y = 0.0f;
 
 		// x placement is window width less half the scaled width
 		// basically centering the image horizontally
 		// m_trans.x = ((float)m_winSize.x - (m_zoom * (float)m_frame.m_width)) / 2.0f;
 
-		m_trans.x = ((float)m_winSize.x - (m_zoom * (float)m_frame.m_width)) - 1;
+		m_trans.x = ((float)contentSize.x - (m_zoom * (float)m_frame.m_width)) - 1;
 	}
 }
 
@@ -129,15 +131,20 @@ void RenderCanvas::DrawString(const std::string& s, float x, float y, const FF_V
 /////////////////////////////////////////////////////////////////////////////
 void RenderCanvas::DrawLines(std::vector<FF_Vector2D>& pts, float z, float f, FF_Vector2D& scale, bool closed )
 {
+	size_t limit = pts.size();
+	if (limit < 1)
+	   return;
+
 	if (closed)
-		glBegin(GL_LINE_LOOP);
+		   glBegin(GL_LINE_LOOP);
 	else glBegin(GL_LINES);
 
-	size_t limit = pts.size();
 	for (size_t i = 0; i < limit; i++)
 	{
-		float x =      pts[i].x * scale.x + m_trans.x;
-		float y = f - (pts[i].y * scale.y + m_trans.y);
+		FF_Vector2D pt = pts[i];
+
+		float x =      pt.x * scale.x + m_trans.x;
+		float y = f - (pt.y * scale.y + m_trans.y);
 
 		glVertex3f( x, y, z );
 
@@ -181,13 +188,15 @@ void RenderCanvas::DrawFaces(void)
 				std::vector<FF_Vector2D> ltEye;
 				std::vector<FF_Vector2D> outsideLips;
 				std::vector<FF_Vector2D> insideLips;
+				std::vector<FF_Vector2D> forehead;
 
 				for (size_t s = 0; s < m_facesLandmarkSets.size(); s++)
 				{
 					dlib::full_object_detection& oneFace_landmarkSet = m_facesLandmarkSets[s];
 
 					m_faceDetectMgr.mp_faceDetector->GetLandmarks( oneFace_landmarkSet, jawline, rtBrow, ltBrow, 
-																												 noseBridge, noseBottom, rtEye, ltEye, outsideLips, insideLips );
+																												 noseBridge, noseBottom, rtEye, ltEye, outsideLips, insideLips,
+																												 forehead ); // forehead only has points if using 81 landmark face model
 
 					glColor3ub( 0, 255, 0 );
 					glLineWidth( 2.0f );
@@ -201,6 +210,7 @@ void RenderCanvas::DrawFaces(void)
 					DrawLines( ltEye,       0.1f, im_size.y, landmark_scale, true );
 					DrawLines( outsideLips, 0.1f, im_size.y, landmark_scale, true );
 					DrawLines( insideLips,  0.1f, im_size.y, landmark_scale, true );
+					DrawLines( forehead,    0.1f, im_size.y, landmark_scale, false );
 
 					glLineWidth( 1.0f );
 				}

@@ -9,10 +9,17 @@
 #include <dlib/image_processing/render_face_detections.h>
 #include <dlib/image_processing.h>
 
+
+enum class FACE_MODEL {
+	sixtyeight = 0,
+	eightyone
+};
+
+
 class FaceDetector
 {
 public:
-	FaceDetector(TheApp* app);
+	FaceDetector(TheApp* app, FACE_MODEL face_model);
 	~FaceDetector();
 
 	void SetImage( FFVideo_Image& im, float detection_scale );
@@ -38,11 +45,15 @@ public:
 										 std::vector<FF_Vector2D>& rtEye,
 										 std::vector<FF_Vector2D>& ltEye,
 										 std::vector<FF_Vector2D>& outsideLips,
-										 std::vector<FF_Vector2D>& insideLips );
+										 std::vector<FF_Vector2D>& insideLips,
+										 std::vector<FF_Vector2D>& forehead );
 
 private:
 
+	
 	dlib::frontal_face_detector			m_detector;
+
+	FACE_MODEL											m_face_model;
 	dlib::shape_predictor						m_sp;
 
 	FFVideo_Image										m_im;							// video frame as delivered by ffmpeg
@@ -102,7 +113,7 @@ public:
 	FaceDetectionThreadMgr(TheApp* app) : mp_app(app), 
 	  mp_frameProcessingThread(NULL), m_stop_frame_processing_loop(false), 
 		m_frame_processing_loop_ended(false), mp_frame_cb(NULL), mp_frame_object(NULL),
-		mp_faceDetector(NULL), m_face_detection_scale(0.25f), 
+		m_face_model(FACE_MODEL::sixtyeight), mp_faceDetector(NULL), m_face_detection_scale(0.35f), 
 		m_faceDetectorInitialized(false), m_faceDetectorEnabled(false),
 		m_faceFeaturesEnabled(false), m_faceImagesEnabled(false), m_faceImagesStandardized(false) {};
 
@@ -142,6 +153,20 @@ public:
 		bool ret = !m_frame_processing_loop_ended;
 
 		return ret;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	// call before starting the thread to set the face model used for face landmarks
+	bool SetFaceModel(FACE_MODEL face_model)
+	{
+		if (IsRunning())
+		{
+			return false;
+		}
+
+		m_face_model = face_model;
+
+		return true;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -212,6 +237,7 @@ public:
 	FRAME_FACE_DETECTION_CALLBACK_CB				  mp_frame_cb;
 	void*																			mp_frame_object;
 
+	FACE_MODEL																m_face_model;
 	FaceDetector*															mp_faceDetector;
 	float																			m_face_detection_scale;
 	bool																			m_faceDetectorInitialized;

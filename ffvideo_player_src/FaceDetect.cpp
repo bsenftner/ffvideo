@@ -16,13 +16,23 @@
 using namespace dlib;
 
 ////////////////////////////////////////////////////////////////////////
-FaceDetector::FaceDetector( TheApp* p_app )
+FaceDetector::FaceDetector( TheApp* p_app, FACE_MODEL face_model )
 {
 	m_detector = get_frontal_face_detector();
 	//
-	std::string model_path = p_app->m_data_dir + "\\shape_predictor_68_face_landmarks.dat";
+	m_face_model = face_model;
 	//
-	// deserialize("c:\\\\dev\\shape_predictor_68_face_landmarks.dat") >> m_sp;
+	std::string model_path;
+	if (face_model == FACE_MODEL::sixtyeight)
+	{
+	  model_path = p_app->m_data_dir + "\\shape_predictor_68_face_landmarks.dat";
+	}
+	else if (face_model == FACE_MODEL::eightyone)
+	{
+		model_path = p_app->m_data_dir + "\\shape_predictor_81_face_landmarks-master\\shape_predictor_81_face_landmarks.dat";
+	}
+	else assert(0);
+
 	deserialize( model_path.c_str() ) >> m_sp;
 
 	m_detect_scale = 0.25f;
@@ -32,9 +42,7 @@ FaceDetector::FaceDetector( TheApp* p_app )
 
 
 ////////////////////////////////////////////////////////////////////////
-FaceDetector::~FaceDetector()
-{
-}
+FaceDetector::~FaceDetector() {}
 
 ////////////////////////////////////////////////////////////////////////
 void FaceDetector::SetImage( FFVideo_Image& im, float detection_scale )
@@ -119,7 +127,25 @@ void FaceDetector::GetFaceImages( std::vector<rectangle>& detections,
 		if (full_head_flag)
 		{
 			// gives us the details for the entire vector of faceLandMarks:
-			std::vector<dlib::chip_details> dets = get_face_chip_details(faceLandmarkSets, 128, 0.8 );
+			std::vector<dlib::chip_details> dets;
+			
+			if (m_face_model == FACE_MODEL::sixtyeight)
+			   dets = get_face_chip_details(faceLandmarkSets, 128, 0.8 );
+			else
+			{ 
+				// get_face_chip_details() requires the 68 landmark face model, 
+				// which is the same as FACE_MODEL::eightyone with the added points removed:
+				//
+				std::vector<full_object_detection> clipped_faceLandmarkSets;
+				for (size_t i = 0; i < faceLandmarkSets.size(); i++)
+				{
+					clipped_faceLandmarkSets.push_back( faceLandmarkSets[i] );
+
+					full_object_detection& r_lmSet = clipped_faceLandmarkSets.back();
+					r_lmSet.parts.resize(68);
+				}
+				dets = get_face_chip_details(clipped_faceLandmarkSets, 128, 0.8 );
+			}
 
 			// storage for an array of face images in dlib format:
 			dlib::array<array2d<unsigned char>> face_chips;
@@ -208,7 +234,8 @@ void FaceDetector::GetLandmarks( dlib::full_object_detection& oneFace_landmarkSe
 																 std::vector<FF_Vector2D>& rtEye,
 																 std::vector<FF_Vector2D>& ltEye,
 																 std::vector<FF_Vector2D>& outsideLips,
-																 std::vector<FF_Vector2D>& insideLips )
+																 std::vector<FF_Vector2D>& insideLips,
+																 std::vector<FF_Vector2D>& forehead )
 	{
 		jawline.clear();
 		rtBrow.clear();
@@ -219,6 +246,10 @@ void FaceDetector::GetLandmarks( dlib::full_object_detection& oneFace_landmarkSe
 		ltEye.clear();
 		outsideLips.clear();
 		insideLips.clear();
+		//
+		forehead.clear();
+		std::vector<FF_Vector2D> forehead_tmp;
+
 		size_t limit = oneFace_landmarkSet.num_parts();
 		for (size_t i = 0; i < limit; i++)
 		{
@@ -240,8 +271,30 @@ void FaceDetector::GetLandmarks( dlib::full_object_detection& oneFace_landmarkSe
 				ltEye.push_back(vec);
 			else if (i < 60)
 				outsideLips.push_back(vec);
-			else 
+			else if (i < 68)
 				insideLips.push_back(vec);
+			else forehead_tmp.push_back(vec);
+		}
+
+		if (forehead_tmp.size() > 0)
+		{
+			assert(m_face_model == FACE_MODEL::eightyone);
+
+			// the forehead points are out of sequential order, fix that:
+
+			forehead.push_back( forehead_tmp[9] );
+			forehead.push_back( forehead_tmp[7] );
+			forehead.push_back( forehead_tmp[8] );
+			forehead.push_back( forehead_tmp[0] );
+			forehead.push_back( forehead_tmp[1] );
+			forehead.push_back( forehead_tmp[2] );
+			forehead.push_back( forehead_tmp[3] );
+			forehead.push_back( forehead_tmp[12] );
+			forehead.push_back( forehead_tmp[4] );
+			forehead.push_back( forehead_tmp[5] );
+			forehead.push_back( forehead_tmp[11] );
+			forehead.push_back( forehead_tmp[6] );
+			forehead.push_back( forehead_tmp[10] );
 		}
 	}
 	
@@ -285,7 +338,7 @@ void FaceDetectionThreadMgr::FrameProcessingLoop(void)
 	//
 	if (!m_faceDetectorInitialized)
 	{
-		mp_faceDetector = new FaceDetector(mp_app);
+		mp_faceDetector = new FaceDetector(mp_app, m_face_model);
 		if (mp_faceDetector)
 		{
 			m_faceDetectorInitialized = true;

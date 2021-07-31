@@ -133,6 +133,10 @@ RenderCanvas::RenderCanvas(wxWindow* parent, VideoStreamConfig* streamConfig)
 	// if used or not, we'll get a faceDetector initialized and spinning waiting for frames:
 	m_faceDetectMgr.mp_frame_cb     = FrameFaceDetectionCallBack;
 	m_faceDetectMgr.mp_frame_object = this;
+	//
+	// select the face landmarks model here:
+	m_faceDetectMgr.SetFaceModel( FACE_MODEL::eightyone );
+	//
 	m_faceDetectMgr.StartFaceDetectionThread();
 
 
